@@ -14,8 +14,9 @@
         <div class="row">
             <div class="col-md-4">
                 <h1>Old Town Alexandria Neighborhood Map</h1>
-                <ul class="nav nav-pills nav-stacked">
-                    <li role="presentation" class="active"><a href="#">Ramsay House</a></li>
+                <ul class="nav nav-pills nav-stacked" data-bind="foreach: sites">
+                    <li><a data-bind="text: name"></a></li>
+                    <!--<li role="presentation" class="active"><a href="#">Ramsay House</a></li>
                     <li role="presentation"><a href="#">Carlyle House</a></li>
                     <li role="presentation"><a href="#">Gadsby's Tavern</a></li>
                     <li role="presentation"><a href="#">Spite House</a></li>
@@ -33,11 +34,10 @@
                     <li role="presentation"><a href="#">Gentry Row</a></li>
                     <li role="presentation"><a href="#">The Athenaeum</a></li>
                     <li role="presentation"><a href="#">Captain's Row</a></li>
-                    <li role="presentation"><a href="#">Torpedo Factory</a></li>
+                    <li role="presentation"><a href="#">Torpedo Factory</a></li>-->
                 </ul>
             </div>
             <div class="col-md-8" id="map">
-                <div></div>
             </div>
         </div>
     </div>
