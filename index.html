@@ -12,37 +12,36 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-4">
-                <h1>Old Town Alexandria Neighborhood Map</h1>
+            <div class="hidden-xs col-sm-4 col-md-4 col-lg-3">
+                <h2>Old Town Map</h2>
+                Search
+                <input></input>
                 <ul class="nav nav-pills nav-stacked" data-bind="foreach: sites">
-                    <li><a data-bind="text: name"></a></li>
-                    <!--<li role="presentation" class="active"><a href="#">Ramsay House</a></li>
-                    <li role="presentation"><a href="#">Carlyle House</a></li>
-                    <li role="presentation"><a href="#">Gadsby's Tavern</a></li>
-                    <li role="presentation"><a href="#">Spite House</a></li>
-                    <li role="presentation"><a href="#">Revolutionary War Cobblestones</a></li>
-                    <li role="presentation"><a href="#">Robert E. Lee's Boyhood Home</a></li>
-                    <li role="presentation"><a href="#">Lee-Fendall House</a></li>
-                    <li role="presentation"><a href="#">Lloyd House</a></li>
-                    <li role="presentation"><a href="#">Christ Church</a></li>
-                    <li role="presentation"><a href="#">Friendship Firehouse</a></li>
-                    <li role="presentation"><a href="#">The Lyceum: Alexandria's History Museum</a></li>
-                    <li role="presentation"><a href="#">The Confederate Soldier</a></li>
-                    <li role="presentation"><a href="#">Market Square</a></li>
-                    <li role="presentation"><a href="#">Stabler-Leadbeater Apothecary Shop</a></li>
-                    <li role="presentation"><a href="#">Old Presbyterian Meeting House</a></li>
-                    <li role="presentation"><a href="#">Gentry Row</a></li>
-                    <li role="presentation"><a href="#">The Athenaeum</a></li>
-                    <li role="presentation"><a href="#">Captain's Row</a></li>
-                    <li role="presentation"><a href="#">Torpedo Factory</a></li>-->
+                    <li>
+                        <a data-bind="text: name"></a>
+                    </li>
                 </ul>
             </div>
-            <div class="col-md-8" id="map">
+            <div class="col-xs-12 hidden-sm hidden-md hidden-lg ">
+                <h2>Old Town Map</h2>
+                Search
+                <input></input>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Points of Interest <span class="caret"></span></a>
+                        <ul class="dropdown-menu" data-bind="foreach: sites">
+                            <li><a data-bind="text: name"></a></li>
+                        </ul>
+                    </li>
+                        <li>
+                            <a data-bind="text: name"></a>
+                        </li>
+                    </ul>
+            </div>
+            <div class="col-xs-12 col-sm-8 col-md-8 col-lg-9" id="map">
             </div>
         </div>
     </div>
-
-
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6M-WiRa9hVVvZeCPqxaQ8z-FuQ7W7sqw&callback=initMap" async
         defer></script>
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
