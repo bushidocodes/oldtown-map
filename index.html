@@ -1,17 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Old Town Alexandria Neighborhood Map</title>
-    <meta name="viewport" content="initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/app.css">
 </head>
+
 <body>
-    <h1>Old Town Alexandria Neighborhood Map</h1>
-    <div id="map"></div>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6M-WiRa9hVVvZeCPqxaQ8z-FuQ7W7sqw&callback=initMap" async defer></script>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4">
+                <h1>Old Town Alexandria Neighborhood Map</h1>
+                <ul class="nav nav-pills nav-stacked">
+                    <li role="presentation" class="active"><a href="#">Ramsay House</a></li>
+                    <li role="presentation"><a href="#">Carlyle House</a></li>
+                    <li role="presentation"><a href="#">Gadsby's Tavern</a></li>
+                    <li role="presentation"><a href="#">Spite House</a></li>
+                    <li role="presentation"><a href="#">Revolutionary War Cobblestones</a></li>
+                    <li role="presentation"><a href="#">Robert E. Lee's Boyhood Home</a></li>
+                    <li role="presentation"><a href="#">Lee-Fendall House</a></li>
+                    <li role="presentation"><a href="#">Lloyd House</a></li>
+                    <li role="presentation"><a href="#">Christ Church</a></li>
+                    <li role="presentation"><a href="#">Friendship Firehouse</a></li>
+                    <li role="presentation"><a href="#">The Lyceum: Alexandria's History Museum</a></li>
+                    <li role="presentation"><a href="#">The Confederate Soldier</a></li>
+                    <li role="presentation"><a href="#">Market Square</a></li>
+                    <li role="presentation"><a href="#">Stabler-Leadbeater Apothecary Shop</a></li>
+                    <li role="presentation"><a href="#">Old Presbyterian Meeting House</a></li>
+                    <li role="presentation"><a href="#">Gentry Row</a></li>
+                    <li role="presentation"><a href="#">The Athenaeum</a></li>
+                    <li role="presentation"><a href="#">Captain's Row</a></li>
+                    <li role="presentation"><a href="#">Torpedo Factory</a></li>
+                </ul>
+            </div>
+            <div class="col-md-8" id="map">
+                <div></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6M-WiRa9hVVvZeCPqxaQ8z-FuQ7W7sqw&callback=initMap" async
+        defer></script>
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="bower_components/knockout/dist/knockout.js"></script>
+    <script src="bower_components/knockstrap/build/knockstrap.min.js"></script>
     <script src="js/app.js"></script>
 </body>
+
 </html>
