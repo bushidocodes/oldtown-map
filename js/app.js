@@ -11,6 +11,7 @@ $(document).ready(function () {
             self.description = description;
         };
     };
+    var infoWindow = null;
 
     // Behaviors
     initMap = function () {
@@ -22,21 +23,28 @@ $(document).ready(function () {
         });
 
         for (var i = 0; i < vm.sites().length; i++) {
+            let site = vm.sites()[i];
             let marker = new google.maps.Marker({
-                position: { lat: vm.sites()[i].lat, lng: vm.sites()[i].lng },
+                position: { lat: site.lat, lng: site.lng },
                 map: map,
-                title: vm.sites()[i].name
-            });
-            let contentString = '<h3>' + vm.sites()[i].name + '</h3>' + '<p>'+ vm.sites()[i].description +'</p>';
-            let infowindow = new google.maps.InfoWindow({
-                content: contentString
+                title: site.name
             });
             marker.addListener('click', function () {
-                infowindow.open(map, marker);
+                generateInfoWindow(site,map,marker);
             });
-
         }
     }
+
+    generateInfoWindow = function(site, map, marker) {
+        if (infoWindow) {
+            infoWindow.close();
+        };
+        infoWindow = new google.maps.InfoWindow({
+            content: '<strong>' + site.name + '</strong>' + '<p>'+ site.description +'</p>'
+        });
+        infoWindow.open(map, marker);
+    };
+
     //Knockout Functionality
     var ViewModel = function () {
         // Data
@@ -45,7 +53,7 @@ $(document).ready(function () {
         self.sites = ko.observableArray([
             new Site("Ramsay House", "221 King St, Alexandria, VA 22314", 38.804628, -77.042357, ""),
             new Site("Carlyle House", "121 N Fairfax St, Alexandria, VA 22314", 38.805228, -77.042012, ""),
-            new Site("Gadsby's Tavern", "134 N Royal St, Alexandria, VA 22314", 38.805554, -77.043619, ""),
+            new Site("Gadsby's Tavern", "134 N Royal St, Alexandria, VA 22314", 38.805554, -77.043619, "GW ate here"),
             new Site("Spite House", "523 Queen St, Alexandria, VA 22314", 38.807307, -77.045064, ""),
             new Site("Revolutionary War Cobblestones", "607 Princess St, Alexandria, VA 22314", 38.808553, -77.045503, ""),
             new Site("Robert E. Lee's Boyhood Home", "607 Oronoco Street, Alexandria, Virginia 22314", 38.809808, -77.045208, ""),
