@@ -12,6 +12,7 @@ $(document).ready(function () {
         };
     };
     var infoWindow = null;
+    var markers = ko.observableArray();
 
     // Behaviors
     initMap = function () {
@@ -23,6 +24,7 @@ $(document).ready(function () {
         });
 
         for (var i = 0; i < vm.sites().length; i++) {
+
             let site = vm.sites()[i];
             let marker = new google.maps.Marker({
                 position: { lat: site.lat, lng: site.lng },
@@ -30,20 +32,29 @@ $(document).ready(function () {
                 title: site.name
             });
             marker.addListener('click', function () {
-                generateInfoWindow(site,map,marker);
+                generateInfoWindow(site, map, marker);
             });
+            markers.push(marker);
         }
     }
 
-    generateInfoWindow = function(site, map, marker) {
+    generateInfoWindow = function (site, map, marker) {
         if (infoWindow) {
             infoWindow.close();
         };
         infoWindow = new google.maps.InfoWindow({
-            content: '<strong>' + site.name + '</strong>' + '<p>'+ site.description +'</p>'
+            content: '<strong>' + site.name + '</strong>' + '<p>' + site.description + '</p>'
         });
         infoWindow.open(map, marker);
     };
+
+    function toggleBounce(marker) {
+        if (marker.getAnimation() !== null) {
+            marker.setAnimation(null);
+        } else {
+            marker.setAnimation(google.maps.Animation.BOUNCE);
+        }
+    }
 
     //Knockout Functionality
     var ViewModel = function () {
@@ -71,9 +82,20 @@ $(document).ready(function () {
             new Site("Captain's Row", "115 Prince St, Alexandria, VA 22314", 38.803433, -77.041098, ""),
             new Site("Torpedo Factory", "105 N Union St, Alexandria, VA 22314", 38.804892, -77.039802, ""),
         ]);
-    };
+
+        // Behavior
+        self.selectSite = function (site) {
+            console.log("click click on " + site.name);
+            //I want to find the marker.title element in self.markers() that matches
+            var selectedSite = jQuery.grep(markers(), function (marker) {
+                // console.log(marker.title);
+                return (marker.title === site.name);
+            });
+            console.log(selectedSite[0].title);
+            toggleBounce(selectedSite[0]);
+        };
+    }; //endViewModel
+
     var vm = new ViewModel;
-
     ko.applyBindings(vm);
-
 });

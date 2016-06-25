@@ -17,7 +17,7 @@
                 Search
                 <input></input>
                 <ul class="nav nav-pills nav-stacked" data-bind="foreach: sites">
-                    <li>
+                    <li data-bind="click: $root.selectSite">
                         <a data-bind="text: name"></a>
                     </li>
                 </ul>
