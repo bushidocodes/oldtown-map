@@ -70,7 +70,7 @@ $(document).ready(function () {
         }
     };
 
-    generateInfoWindow = function (site, map, marker) {
+    function generateInfoWindow (site, map, marker) {
         if (infoWindow) {
             infoWindow.close();
         };
@@ -80,11 +80,13 @@ $(document).ready(function () {
         infoWindow.open(map, marker);
     };
 
-    function toggleBounce(marker) {
+    function bounce(marker, numberOfBounces) {
         if (marker.getAnimation() !== null) {
             marker.setAnimation(null);
         } else {
+            // The BOUNCE animation lasts 700ms, so calculate duration and then use setTimeout()
             marker.setAnimation(google.maps.Animation.BOUNCE);
+            setTimeout(function(){ marker.setAnimation(null); }, 700*numberOfBounces);
         }
     }
 
@@ -136,7 +138,7 @@ $(document).ready(function () {
             var selectedSite = jQuery.grep(markers(), function (marker) {
                 return (marker.title === site.name);
             });
-            toggleBounce(selectedSite[0]);
+            bounce(selectedSite[0],2);
         };
     }; //endViewModel
 
