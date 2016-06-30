@@ -38,6 +38,38 @@ $(document).ready(function () {
         }
     }
 
+    ko.bindingHandlers.yourBindingName = {
+        init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+            // This will be called when the binding is first applied to an element
+            // Set up any initial state, event handlers, etc. here
+        },
+        update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+            // This will be called once when the binding is first applied to an element,
+            // and again whenever any observables/computeds that are accessed change
+            // Update the DOM element based on the supplied values here.
+        }
+    };
+
+    ko.bindingHandlers.updateMarkers = {
+        update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+            for (var i = 0; i < markers().length; i++) {
+                let marker = markers()[i]
+                let markerInFilteredSites = false;
+                for (var j = 0; j < vm.filteredSites().length; j++) {
+                    site = vm.filteredSites()[j];
+                    if (marker.title === site.name) {
+                        markerInFilteredSites = true;
+                    };
+                };
+                if (markerInFilteredSites) {
+                    if (marker.map !== map) marker.setMap(map);
+                } else {
+                    if (marker.map === map) marker.setMap(null);
+                };
+            }
+        }
+    };
+
     generateInfoWindow = function (site, map, marker) {
         if (infoWindow) {
             infoWindow.close();
@@ -86,33 +118,24 @@ $(document).ready(function () {
 
         //This filter implementation is based on Ryan Niemeyer's Array Filtering section found at http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
         self.filteredSites = ko.computed(function () {
-            console.log(self.searchString());
             if (self.searchString() === "") {
-                console.log("There is no search string");
                 return self.sites();
             } else if (self.searchString() !== "") {
-                console.log("There is a search string");
                 var filter = self.searchString().toLowerCase();
-                return ko.utils.arrayFilter(self.sites(), function(site) {
+                return ko.utils.arrayFilter(self.sites(), function (site) {
                     var siteNoCase = site.name.toLowerCase();
                     return siteNoCase.includes(filter);
                 });
-            } else {
-                console.log("Unknown error");
-                return self.sites();
-            }
+            };
         });
 
 
         // Behavior
         self.selectSite = function (site) {
-            console.log("click click on " + site.name);
             //I want to find the marker.title element in self.markers() that matches
             var selectedSite = jQuery.grep(markers(), function (marker) {
-                // console.log(marker.title);
                 return (marker.title === site.name);
             });
-            console.log(selectedSite[0].title);
             toggleBounce(selectedSite[0]);
         };
     }; //endViewModel
