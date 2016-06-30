@@ -52,6 +52,7 @@ $(document).ready(function () {
 
     ko.bindingHandlers.updateMarkers = {
         update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+            clearInfoWindow();
             for (var i = 0; i < markers().length; i++) {
                 let marker = markers()[i]
                 let markerInFilteredSites = false;
@@ -70,10 +71,14 @@ $(document).ready(function () {
         }
     };
 
-    function generateInfoWindow (site, map, marker) {
+    function clearInfoWindow() {
         if (infoWindow) {
             infoWindow.close();
         };
+    };
+
+    function generateInfoWindow(site, map, marker) {
+        clearInfoWindow();
         infoWindow = new google.maps.InfoWindow({
             content: '<strong>' + site.name + '</strong>' + '<p>' + site.description + '</p>'
         });
@@ -86,7 +91,7 @@ $(document).ready(function () {
         } else {
             // The BOUNCE animation lasts 700ms, so calculate duration and then use setTimeout()
             marker.setAnimation(google.maps.Animation.BOUNCE);
-            setTimeout(function(){ marker.setAnimation(null); }, 700*numberOfBounces);
+            setTimeout(function () { marker.setAnimation(null); }, 700 * numberOfBounces);
         }
     }
 
@@ -138,7 +143,8 @@ $(document).ready(function () {
             var selectedSite = jQuery.grep(markers(), function (marker) {
                 return (marker.title === site.name);
             });
-            bounce(selectedSite[0],2);
+            bounce(selectedSite[0], 2);
+            generateInfoWindow(site, map, selectedSite[0]);
         };
     }; //endViewModel
 
