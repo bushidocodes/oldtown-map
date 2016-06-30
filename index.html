@@ -15,8 +15,9 @@
             <div class="hidden-xs col-sm-4 col-md-4 col-lg-3">
                 <h2>Old Town Map</h2>
                 Search
-                <input></input>
-                <ul class="nav nav-pills nav-stacked" data-bind="foreach: sites">
+                <input data-bind="textInput: searchString"></input>
+                <!--<h4 data-bind="text: searchString"></h4>-->
+                <ul class="nav nav-pills nav-stacked" data-bind="foreach: filteredSites">
                     <li data-bind="click: $root.selectSite">
                         <a data-bind="text: name"></a>
                     </li>

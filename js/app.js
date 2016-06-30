@@ -60,6 +60,7 @@ $(document).ready(function () {
     var ViewModel = function () {
         // Data
         var self = this;
+        self.searchString = ko.observable("");
         //site pulled from Frommer's at http://www.frommers.com/destinations/alexandria-va/623095
         self.sites = ko.observableArray([
             new Site("Ramsay House", "221 King St, Alexandria, VA 22314", 38.804628, -77.042357, ""),
@@ -82,6 +83,26 @@ $(document).ready(function () {
             new Site("Captain's Row", "115 Prince St, Alexandria, VA 22314", 38.803433, -77.041098, ""),
             new Site("Torpedo Factory", "105 N Union St, Alexandria, VA 22314", 38.804892, -77.039802, ""),
         ]);
+
+        //This filter implementation is based on Ryan Niemeyer's Array Filtering section found at http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
+        self.filteredSites = ko.computed(function () {
+            console.log(self.searchString());
+            if (self.searchString() === "") {
+                console.log("There is no search string");
+                return self.sites();
+            } else if (self.searchString() !== "") {
+                console.log("There is a search string");
+                var filter = self.searchString().toLowerCase();
+                return ko.utils.arrayFilter(self.sites(), function(site) {
+                    var siteNoCase = site.name.toLowerCase();
+                    return siteNoCase.includes(filter);
+                });
+            } else {
+                console.log("Unknown error");
+                return self.sites();
+            }
+        });
+
 
         // Behavior
         self.selectSite = function (site) {
