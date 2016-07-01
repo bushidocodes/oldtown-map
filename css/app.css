@@ -1,3 +1,51 @@
-#map {
-height: 900px;
+/*body, html, page-content-wrapper, .container-fluid, .row, #map{
+height: 100%;
+}*/
+
+
+/*Override default simple-sidebar padding to render map directly against sidebar*/
+#page-content-wrapper {
+        padding: 0px;
 }
+
+html, body { height: 100%; }
+
+#wrapper, #page-content-wrapper, .container-fluid, .row, #map {
+    /*min-height: 100px;*/
+    height: 100%;
+    }
+
+#map {
+    position: relative;
+}
+
+#menu-toggle {
+    position: absolute;
+    width: 95px;
+    left: 10px;
+    top: 80px;
+    z-index: 2;
+}
+
+.form-control {
+    margin-left: 20px;
+    margin-right: 20px;
+    width:210px;
+}
+/*
+#map {
+    min-height: 300px;
+    height: auto;
+}*/
+/*
+.large-scrollable-menu {
+    height: auto;
+    max-height: 600px;
+    overflow-x: hidden;
+}
+
+.small-scrollable-menu {
+    height: auto;
+    max-height: 120px;
+    overflow-x: hidden;
+}*/
