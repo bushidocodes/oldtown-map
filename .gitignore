@@ -43,3 +43,4 @@ bower_components
 # VSCode Components #
 ####################
 .vscode
+jsconfig.json
