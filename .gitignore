@@ -37,4 +37,9 @@ ehthumbs.db
 Thumbs.db
 
 # Bower Components #
+####################
 bower_components
+
+# VSCode Components #
+####################
+.vscode
