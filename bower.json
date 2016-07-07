@@ -1,0 +1,24 @@
+{
+  "name": "oldtown-map",
+  "homepage": "https://github.com/spmcbride1201/oldtown-map",
+  "authors": [
+    "Sean McBride <spmcbride1201@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "knockstrap": "^1.3.2",
+    "knockout": "^3.4.0",
+    "jquery": "~1.9.1"
+  }
+}
