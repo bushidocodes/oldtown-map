@@ -143,16 +143,32 @@ function pullImagesFromWikipedia(site, wikipediaID) {
             for (var i = 0; i < data.query.pages[wikipediaID].images.length; i++) {
                 var imageName = data.query.pages[wikipediaID].images[i].title;
                 var process = true;
-                if (imageName.includes("map")) process = false;
-                if (imageName.includes("Map")) process = false;
-                if (imageName.includes("logo")) process = false;
-                if (imageName.includes("Logo")) process = false;
-                if (imageName.includes("pog")) process = false;
-                if (imageName.includes("Flag")) process = false;
-                if (imageName.includes("book")) process = false;
-                if (imageName.includes("question")) process = false;
-                if (imageName.includes("Ambox")) process = false;
-                if (imageName.includes("Nuvola")) process = false;
+                //The following statements prevent rendering of common junk images returned by Wikipedia
+                //The syntax
+                //      if (imageName.includes("map")) process = false;
+                //Was replaced by
+                //      if (imageName.indexOf("map") >= 0) process = false;
+                //Specifically to support IE11. **shakes fist at IE continuously until January 2023 EOL date**
+                // if (imageName.includes("map")) process = false;
+                // if (imageName.includes("Map")) process = false;
+                // if (imageName.includes("logo")) process = false;
+                // if (imageName.includes("Logo")) process = false;
+                // if (imageName.includes("pog")) process = false;
+                // if (imageName.includes("Flag")) process = false;
+                // if (imageName.includes("book")) process = false;
+                // if (imageName.includes("question")) process = false;
+                // if (imageName.includes("Ambox")) process = false;
+                // if (imageName.includes("Nuvola")) process = false;
+                if (imageName.indexOf("map") >= 0) process = false;
+                if (imageName.indexOf("Map") >= 0) process = false;
+                if (imageName.indexOf("logo") >= 0) process = false;
+                if (imageName.indexOf("Logo") >= 0) process = false;
+                if (imageName.indexOf("pog") >= 0) process = false;
+                if (imageName.indexOf("Flag") >= 0) process = false;
+                if (imageName.indexOf("book") >= 0) process = false;
+                if (imageName.indexOf("question") >= 0) process = false;
+                if (imageName.indexOf("Ambox") >= 0) process = false;
+                if (imageName.indexOf("Nuvola") >= 0) process = false;
                 if (process) resolveWikipediaImageURL(site, imageName);
                 // imageNames += data.query.pages[wikipediaID].images[i].title;
                 // console.log(data.query.pages[wikipediaID].images[i].title.split(":")[1]);
@@ -292,7 +308,8 @@ var ViewModel = function ViewModel() {
             var filter = self.searchString().toLowerCase();
             return ko.utils.arrayFilter(self.sites(), function (site) {
                 var siteNoCase = site.name.toLowerCase();
-                return siteNoCase.includes(filter);
+                //Changed syntax from return siteNoCase.includes(filter); to support IE11
+                if (siteNoCase.indexOf(filter) >= 0) return true;
             });
         };
     });
