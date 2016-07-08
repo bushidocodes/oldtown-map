@@ -1,3 +1,6 @@
+
+// Site class is used to describe a historic site that can be rendered on the map
+// The images array is NOT used????
 class Site {
     constructor(name, address, lat, lng, description, wikipediaID) {
         var self = this;
@@ -8,16 +11,20 @@ class Site {
         self.description = description;
         self.wikipediaID = wikipediaID;
         self.images = ko.observableArray();
-    };
-};
+    }
+}
+
+// Declare Google Maps UI elements
+// infoWindow is a single global object in order to ensure that only one infoWindow is rendered at a time
 var infoWindow = null;
 var markers = ko.observableArray();
 
+// Custom Google Maps Style
 var styles = [{ "featureType": "all", "elementType": "labels.text.fill", "stylers": [{ "saturation": 36 }, { "color": "#000000" }, { "lightness": 40 }] }, { "featureType": "all", "elementType": "labels.text.stroke", "stylers": [{ "visibility": "on" }, { "color": "#000000" }, { "lightness": 16 }] }, { "featureType": "all", "elementType": "labels.icon", "stylers": [{ "visibility": "off" }] }, { "featureType": "administrative", "elementType": "geometry.fill", "stylers": [{ "color": "#000000" }, { "lightness": 20 }] }, { "featureType": "administrative", "elementType": "geometry.stroke", "stylers": [{ "color": "#000000" }, { "lightness": 17 }, { "weight": 1.2 }] }, { "featureType": "landscape", "elementType": "geometry", "stylers": [{ "color": "#000000" }, { "lightness": 20 }] }, { "featureType": "poi", "elementType": "geometry", "stylers": [{ "color": "#000000" }, { "lightness": 21 }] }, { "featureType": "road.highway", "elementType": "geometry.fill", "stylers": [{ "color": "#000000" }, { "lightness": 17 }] }, { "featureType": "road.highway", "elementType": "geometry.stroke", "stylers": [{ "color": "#000000" }, { "lightness": 29 }, { "weight": 0.2 }] }, { "featureType": "road.arterial", "elementType": "geometry", "stylers": [{ "color": "#000000" }, { "lightness": 18 }] }, { "featureType": "road.local", "elementType": "geometry", "stylers": [{ "color": "#000000" }, { "lightness": 16 }] }, { "featureType": "transit", "elementType": "geometry", "stylers": [{ "color": "#000000" }, { "lightness": 19 }] }, { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#000000" }, { "lightness": 17 }] }]
 
 // Behaviors
 function initMap() {
-    self.geocoder = new google.maps.Geocoder();
+    // Declare and instatiate Google Map object using desired view zoom, custom styling and map type
     self.map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 38.806, lng: -77.045 },
         zoom: 16,
@@ -25,8 +32,9 @@ function initMap() {
         styles: styles
     });
 
+    // Iterate through the array of sites, create a marker for each site, add a listener on the marker that bounces the marker twice and renders the infowindow for this marker, and add the marker to the markers array
+    // All markers are diplayed on the map upon initial load
     for (var i = 0; i < vm.sites().length; i++) {
-
         let site = vm.sites()[i];
         let marker = new google.maps.Marker({
             position: { lat: site.lat, lng: site.lng },
@@ -38,21 +46,11 @@ function initMap() {
             generateInfoWindow(site, map, marker);
         });
         markers.push(marker);
-    }
-}
-
-ko.bindingHandlers.yourBindingName = {
-    init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
-        // This will be called when the binding is first applied to an element
-        // Set up any initial state, event handlers, etc. here
-    },
-    update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
-        // This will be called once when the binding is first applied to an element,
-        // and again whenever any observables/computeds that are accessed change
-        // Update the DOM element based on the supplied values here.
-    }
+    };
 };
 
+// updateMarkers is a custom Knockout binding handler that performs real time processing on the search text field in the menu
+// It clears the infoWindow if open and then iterates through the markers array. If a marker is in the filderedSites array, meaning that it meets the search criteria provided by the user, attach the marker to the map. Otherwise, detach the marker from the map.
 ko.bindingHandlers.updateMarkers = {
     update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
         clearInfoWindow();
@@ -74,6 +72,7 @@ ko.bindingHandlers.updateMarkers = {
     }
 };
 
+// clearInfoWindow() gracefully closes the infoWindow if it is open
 function clearInfoWindow() {
     if (infoWindow) {
         infoWindow.close();
@@ -83,17 +82,11 @@ function clearInfoWindow() {
 function generateInfoWindow(site, map, marker) {
     clearInfoWindow();
     if (site.wikipediaID) pullImagesFromWikipedia(site, site.wikipediaID);
-    // var imageHTML = "";
-    // for (var i = 0; i < images.length; i++) {
-    //     imageHTML += '<img href="' + images[i] + '" height="100" width="100">'
-    // }
-    // console.log(imageHTML);
     var contentString = '<strong>' + site.name + '</strong>' + '<p>' + site.description + '</p>'
     if (site.wikipediaID) {
         contentString += '<a href="https://en.wikipedia.org/?curid=' + site.wikipediaID + '">View Wikipedia Page</a><br>';
     };
     infoWindow = new google.maps.InfoWindow({
-        // content: '<strong>' + site.name + '</strong>' + '<p>' + site.description + '</p>'
         content: contentString
     });
     infoWindow.open(map, marker);
@@ -109,6 +102,9 @@ function bounce(marker, numberOfBounces) {
     }
 }
 
+// pullImagesFromWikipedia is a function that issues a JSONP format Ajax request to the Wikipedia Mediawiki API
+// It retrieves all images displayed on the site's Wikipedia page, filters out known junk images based on the name of the image, and then calls the helper function resolveWikipediaImageURL for iamges that pass the filter.
+// Why does this function need to take a seperate wikipediaID if wikipediaID is an attribute of class Site????
 function pullImagesFromWikipedia(site, wikipediaID) {
     var wikipediaEndpoint = "https://en.wikipedia.org/w/api.php"
     $.ajax({
@@ -122,12 +118,8 @@ function pullImagesFromWikipedia(site, wikipediaID) {
         },
         dataType: "jsonp",
         success: (function (data) {
-            // var string
-            // console.log(data.query.pages[wikipediaID].images[0])
-
             var imageNames = [];
             var imageURLs = []
-            // console.log(data.query.pages[wikipediaID].images.length);
             for (var i = 0; i < data.query.pages[wikipediaID].images.length; i++) {
                 let imageName = data.query.pages[wikipediaID].images[i].title;
                 let process = true;
@@ -137,16 +129,6 @@ function pullImagesFromWikipedia(site, wikipediaID) {
                 //Was replaced by
                 //      if (imageName.indexOf("map") >= 0) process = false;
                 //Specifically to support IE11. **shakes fist at IE continuously until January 2023 EOL date**
-                // if (imageName.includes("map")) process = false;
-                // if (imageName.includes("Map")) process = false;
-                // if (imageName.includes("logo")) process = false;
-                // if (imageName.includes("Logo")) process = false;
-                // if (imageName.includes("pog")) process = false;
-                // if (imageName.includes("Flag")) process = false;
-                // if (imageName.includes("book")) process = false;
-                // if (imageName.includes("question")) process = false;
-                // if (imageName.includes("Ambox")) process = false;
-                // if (imageName.includes("Nuvola")) process = false;
                 if (imageName.indexOf("map") >= 0) process = false;
                 if (imageName.indexOf("Map") >= 0) process = false;
                 if (imageName.indexOf("logo") >= 0) process = false;
@@ -158,27 +140,13 @@ function pullImagesFromWikipedia(site, wikipediaID) {
                 if (imageName.indexOf("Ambox") >= 0) process = false;
                 if (imageName.indexOf("Nuvola") >= 0) process = false;
                 if (process) resolveWikipediaImageURL(site, imageName);
-                // imageNames += data.query.pages[wikipediaID].images[i].title;
-                // console.log(data.query.pages[wikipediaID].images[i].title.split(":")[1]);
-                // var results = data.query.pages[wikipediaID].images[i].title.split(":")
-                // imageNames.push(data.query.pages[wikipediaID].images[i].title);
             };
-            // console.log(imageNames[0]);
-            // for (var j = 0; j < imageNames.length; j++) {
-            //     // console.log(imageNames[j]);
-            //     imageURLs.push(resolveWikipediaImageURL(marker, imageNames[j]));
-            // }
-            //  console.log(imageURLs[0]);
-            //console.log(Object.keys(data.query.pages));
-
-            //return imageURLs;
         })
     });
 
+    // resolveWikipediaImageURL is a helper function that issues a second Ajax request in JSONP format to retrieve the image URL, formats an <img> tag with style information, and then appends the tag to the current infoWindow.
+    // It also appends the URL to the site.images array, but this is probably NOT USED
     function resolveWikipediaImageURL(site, imageName) {
-        //return imageURL
-        // console.log(imageName);
-        // var wikipediaEndpoint = "https://en.wikipedia.org/w/api.php"
         $.ajax({
             url: wikipediaEndpoint,
             cache: true,
@@ -191,106 +159,27 @@ function pullImagesFromWikipedia(site, wikipediaID) {
             },
             dataType: "jsonp",
             success: (function (data) {
-                // console.log(data.query.pages[Object.keys(data.query.pages)].imageinfo[0].url);
-                //console.log(Object.keys(data.query.pages));
-                //let image = data.query.pages;
-                // console.log(image);
-                // console.log(data.query.pages[Object.keys(data.query.pages)].imageinfo[0].url);
                 var imageHTML = '<img src="' + data.query.pages[Object.keys(data.query.pages)].imageinfo[0].url + '" height="20%" width="20%" class="img-circle">';
-                // console.log(imageHTML);
-
                 infoWindow.setContent(infoWindow.content + imageHTML);
                 site.images.push(data.query.pages[Object.keys(data.query.pages)].imageinfo[0].url);
 
             })
         });
-
-        // console.log(imageHTML);
-        // marker.content.concat(imageHTML);
-        // return data.query.pages[Object.keys(data.query.pages)].imageinfo[0].url;
     };
-
-
-    //query.pages.-1.imageinfo.url
-
-
-    //Query Images from Page with ID Al-Farabi
-    // Request
-    // https://en.wikipedia.org/w/api.php?action=query&pageids=12593872&prop=images&format=json
-
-    // Response
-    // {"batchcomplete":"",
-    //     "query":
-    //         {"pages":
-    //             {"175040":
-    //                 {"pageid":175040,
-    //                 "ns":0,
-    //                 "title":"Al-Farabi",
-    //                 "images":[
-    //                     {"ns":6,"title":"File:Al-Farabi.jpg"},
-    //                     {"ns":6,"title":"File:Al-Farabi.png"},
-    //                     {"ns":6,"title":"File:Bnf lat 9335.jpg"},
-    //                     {"ns":6,"title":"File:Bodlein Library MS. Arab.d.84 roll332 frame1.jpg"},
-    //                     {"ns":6,"title":"File:Commons-logo.svg"},
-    //                     {"ns":6,"title":"File:Copyright-problem.svg"},
-    //                     {"ns":6,"title":"File:Iranian Farabi.jpg"},
-    //                     {"ns":6,"title":"File:KazakhstanP20-200Tenge-1999-donatedoy f.jpg"},
-    //                     {"ns":6,"title":"File:Wikiquote-logo.svg"}
-    //                 ]
-    //             }
-    //         }
-    //     }
-    // }
-
-    //images are query.pages.175040.images[i].title
-
-    // get full URL of pictures
-    // Request
-    // https://en.wikipedia.org/w/api.php?
-    // action=query&
-    // titles=Image:Al-Farabi.png&
-    // prop=imageinfo&
-    // iiprop=url
-
-    // {
-    //     "batchcomplete": "",
-    //     "query": {
-    //         "normalized": [
-    //             {
-    //                 "from": "Image:Al-Farabi.png",
-    //                 "to": "File:Al-Farabi.png"
-    //             }
-    //         ],
-    //         "pages": {
-    //             "-1": {
-    //                 "ns": 6,
-    //                 "title": "File:Al-Farabi.png",
-    //                 "missing": "",
-    //                 "imagerepository": "shared",
-    //                 "imageinfo": [
-    //                     {
-    //                         "url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Al-Farabi.png",
-    //                         "descriptionurl": "https://commons.wikimedia.org/wiki/File:Al-Farabi.png",
-    //                         "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=578353"
-    //                     }
-    //                 ]
-    //             }
-    //         }
-    //     }
-    // }
-
-
-    // url is query.pages.-1.imageinfo.url
 
 };
 
 //Knockout Functionality
 var ViewModel = function () {
-    // Data
+
+// ViewModel Data
+
     var self = this;
+    // Intially set searchString, which is bound to sidebar search field, to an empty string
     self.searchString = ko.observable("");
-    //site pulled from Frommer's at http://www.frommers.com/destinations/alexandria-va/623095
-    //descriptions pulled form the Extraordinary Alexandria tourism site at http://www.visitalexandriava.com/things-to-do/historic-attractions-and-museums/?filter%5Bcategories.catid%5D=65&filter%5Bcategories.subcatid%5D%5B%24in%5D%5B0%5D=389&filter%5Brecid%5D%5B%24nin%5D%5B0%5D=2785&filter%5Brecid%5D%5B%24nin%5D%5B1%5D=2816&filter%5Bsortby%5D=rank%3D1%26sortcompany%3D1&options%5Blimit%5D=16&options%5Bskip%5D=0&options%5BloadMore%5D=false&options%5Bsort%5D%5Brank%5D=1&options%5Bsort%5D%5Bsortcompany%5D=1
+
+    // Create a Knockout Observable Array of instances of Site with prepopulated lats and lngs and wikipediaIDs
+    // Site descriptions are pulled from Frommer's at http://www.frommers.com/destinations/alexandria-va/623095 and from the Extraordinary Alexandria tourism site at http://www.visitalexandriava.com/things-to-do/historic-attractions-and-museums/
     self.sites = ko.observableArray([
         new Site("Ramsay House and Visitor's Center", "221 King St, Alexandria, VA 22314", 38.804628, -77.042357, "Alexandria’s Visitor's Center was originally the home of William Ramsay, one of the three original Scottish settlers that settled the area in November 1748 and petitioned the House of Burgesses to establish a town.", null),
         new Site("Carlyle House", "121 N Fairfax St, Alexandria, VA 22314", 38.805228, -77.042012, "A Georgian Palladian manor house built in 1753 by merchant and city founder John Carlyle. Here, five royal governors and General Braddock met to discuss funding of the French and Indian War. Daily tours, youth programs, special events, exhibits and lectures offer visitors a chance to experience eighteenth century life through the eyes of one man and his family as he made the journey from English citizen to American patriot. The story of Carlyle House parallels the early history of Alexandria, colonial Virginia, and America and is brought to life through costumed interpreters, guides and fun family programs. Tues.-Sat. 10 a.m.-4 p.m.; Sun. noon-4 p.m. (tours on the hour and half hour, last tour at 4).", 12593872),
@@ -314,7 +203,7 @@ var ViewModel = function () {
         new Site("Torpedo Factory", "105 N Union St, Alexandria, VA 22314", 38.804892, -77.039802, "The Torpedo Factory Art Center was once a torpedo factory!<br>The U.S. Naval Torpedo Station opened in 1919 and operated for five years before becoming munitions storage. With the onset of WWII, t produced Mark III and Mark IV torpedoes. By the war's end, it was converted to government storage until the City of Alexandria bought it in 1969. In 1974, a group of visionary artists proposed to renovate part of the neglected factory into usable studio spaces. One of the country's earliest examples of creative reuse of industrial space, the Torpedo Factory Art Center became a catalyst for the revitalization of the Potomac riverfront and the historic preservation of Old Town Alexandria as a thriving visitor destination. Today, it continues to be a prototype for other visual arts organizations around the world.", 21469711),
     ]);
 
-    //This filter implementation is based on Ryan Niemeyer's Array Filtering section found at http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
+    // filteredSites is a Knockout Computed object that stores all sites with a title that matches searchString without regard to case. This filter implementation is based on Ryan Niemeyer's Array Filtering section found at http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
     self.filteredSites = ko.computed(function () {
         if (self.searchString() === "") {
             return self.sites();
@@ -329,14 +218,16 @@ var ViewModel = function () {
     });
 
 
-    // Behavior
+    // Behaviors
+
+    // selectSite is called when a specific site is selected from the filtered list of sites in the sidebar
+    // It finds the marker with a title that matches the name of the selected site, bounces that marker twice, and then renders the infoWindow on that marker using the data from the selected site.
     self.selectSite = function (site) {
-        //I want to find the marker.title element in self.markers() that matches
-        var selectedSite = jQuery.grep(markers(), function (marker) {
+        var markerOfSelectedSite = jQuery.grep(markers(), function (marker) {
             return (marker.title === site.name);
         });
-        bounce(selectedSite[0], 2);
-        generateInfoWindow(site, map, selectedSite[0]);
+        bounce(markerOfSelectedSite[0], 2);
+        generateInfoWindow(site, map, markerOfSelectedSite[0]);
     };
 }; //endViewModel
 
