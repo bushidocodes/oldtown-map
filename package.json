@@ -1,0 +1,41 @@
+{
+  "name": "oldtown-map",
+  "version": "1.0.0",
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
+  "description": "oldtown-map is a JavaScript application that renders historic locations in Old Town Alexandria Virginia on a Google Map as markers. It provides a sidebar with a list of these locations and a searchable filter list that filters both the list and the markers on the map. Selecting a marker or a location on the list opens an InfoView with static information about the location. If an item has a Wikipedia ID, then the application displays a link to the Wikipedia page for the location and the infoView loads and scales thumbnail versions of the images on the locaiton's wikipedia page.",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-cli": "^6.10.1",
+    "babel-preset-es2015": "^6.9.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-bower": "0.0.13",
+    "gulp-changed": "^1.3.0",
+    "gulp-clean-css": "^2.0.11",
+    "gulp-concat": "^2.6.0",
+    "gulp-jshint": "^2.0.1",
+    "gulp-minify-css": "^1.2.4",
+    "gulp-minify-html": "^1.0.6",
+    "gulp-strip-debug": "^1.1.0",
+    "gulp-uglify": "^1.5.4",
+    "jshint": "^2.9.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spmcbride1201/oldtown-map.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/spmcbride1201/oldtown-map/issues"
+  },
+  "homepage": "https://github.com/spmcbride1201/oldtown-map#readme"
+}

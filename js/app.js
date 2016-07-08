@@ -17,7 +17,7 @@ var styles = [{ "featureType": "all", "elementType": "labels.text.fill", "styler
 
 // Behaviors
 function initMap() {
-    geocoder = new google.maps.Geocoder();
+    self.geocoder = new google.maps.Geocoder();
     self.map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 38.806, lng: -77.045 },
         zoom: 16,
@@ -60,7 +60,7 @@ ko.bindingHandlers.updateMarkers = {
             let marker = markers()[i]
             let markerInFilteredSites = false;
             for (var j = 0; j < vm.filteredSites().length; j++) {
-                site = vm.filteredSites()[j];
+                let site = vm.filteredSites()[j];
                 if (marker.title === site.name) {
                     markerInFilteredSites = true;
                 };
