@@ -19,7 +19,7 @@ var cleanCSS = require('gulp-clean-css');
 var stripDebug = require('gulp-strip-debug');
 var uglify = require('gulp-uglify');
 var babel = require('gulp-babel');
-
+var bower = require('gulp-bower');
 
 // minify new or changed HTML pages
 gulp.task('html', function () {
@@ -53,9 +53,6 @@ gulp.task('js', function () {
         .pipe(gulp.dest('./dist/js/'));
 });
 
-// include plug-ins
-
-
 // CSS concat, auto-prefix and minify
 gulp.task('css', function () {
     gulp.src(['./css/*.css'])
@@ -64,12 +61,15 @@ gulp.task('css', function () {
         .pipe(gulp.dest('./dist/css/'));
 });
 
-// include plug-ins
-var bower = require('gulp-bower');
+// copy images to dist
+gulp.task('images', function () {
+    gulp.src(['./images/*.png'])
+        .pipe(gulp.dest('./dist/images/'));
+});
 
 // install bower components
 gulp.task('bower', function () {
     return bower().pipe(gulp.dest('./dist/bower_components'));
 });
 
-gulp.task('default', ['html','css','js','bower']);
+gulp.task('default', ['html','css','js','images','bower']);
