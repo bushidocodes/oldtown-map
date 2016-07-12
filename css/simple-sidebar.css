@@ -100,7 +100,8 @@
     background: none;
 }
 
-@media(min-width:768px) {
+/*Commented out media wiki to ensure that sidebar is closed when app opens and map div loads as the correct width*/
+/*@media(min-width:768px) {
     #wrapper {
         padding-left: 250px;
     }
@@ -117,13 +118,13 @@
         width: 0;
     }
 
-    #page-content-wrapper {
+    #page-content-wrapper {*/
         /*padding: 20px;*/
-        position: relative;
+        /*position: relative;
     }
 
     #wrapper.toggled #page-content-wrapper {
         position: relative;
         margin-right: 0;
     }
-}
+}*/
