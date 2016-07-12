@@ -20,16 +20,26 @@ var stripDebug = require('gulp-strip-debug');
 var uglify = require('gulp-uglify');
 var babel = require('gulp-babel');
 var bower = require('gulp-bower');
+// var watchify = require('watchify');
+// var source = require('vinyl-source-stream');
+var gutil = require('gulp-util');
+// var browserify = require('browserify');
+
+// Define directory structure of project
+var htmlSrc = './*.html';
+var cssSrc = './css/*.css';
+var jsSrc = './js/*.js';
+var imgSrc = './images/*.png';
+var buildDir = './dist';
+
 
 // minify new or changed HTML pages
 gulp.task('html', function () {
-    var htmlSrc = './*.html',
-        htmlDst = './dist';
 
     gulp.src(htmlSrc)
-        .pipe(changed(htmlDst))
+        .pipe(changed(buildDir))
         .pipe(minifyHTML())
-        .pipe(gulp.dest(htmlDst));
+        .pipe(gulp.dest(buildDir));
 });
 
 
@@ -42,7 +52,7 @@ gulp.task('html', function () {
 
 // Strip debugging, Transpile via Babel, concat, and minify
 gulp.task('js', function () {
-    gulp.src(['./js/*.js'])
+    gulp.src([jsSrc])
         .pipe(stripDebug())
         .pipe(babel({
             presets: ['es2015']
@@ -50,26 +60,26 @@ gulp.task('js', function () {
         .pipe(concat('scripts.js'))
 
         // .pipe(uglify())  //unsure why this is failing... commented out for now
-        .pipe(gulp.dest('./dist/js/'));
+        .pipe(gulp.dest(buildDir + '/js/'));
 });
 
 // CSS concat, auto-prefix and minify
 gulp.task('css', function () {
-    gulp.src(['./css/*.css'])
+    gulp.src([cssSrc])
         .pipe(concat('styles.css'))
         .pipe(cleanCSS())
-        .pipe(gulp.dest('./dist/css/'));
+        .pipe(gulp.dest(buildDir + '/css/'));
 });
 
 // copy images to dist
 gulp.task('images', function () {
-    gulp.src(['./images/*.png'])
-        .pipe(gulp.dest('./dist/images/'));
+    gulp.src([imgSrc])
+        .pipe(gulp.dest(buildDir + '/images/'));
 });
 
 // install bower components
 gulp.task('bower', function () {
-    return bower().pipe(gulp.dest('./dist/bower_components'));
+    return bower().pipe(gulp.dest(buildDir + '/bower_components'));
 });
 
 gulp.task('default', ['html','css','js','images','bower']);
