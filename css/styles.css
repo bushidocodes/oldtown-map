@@ -1,4 +1,4 @@
-.sidebar-nav li a,.sidebar-nav li a:active,.sidebar-nav li a:focus{text-decoration:none}#page-content-wrapper{padding:0}#map,#page-content-wrapper,#wrapper,.container-fluid,.row,body,html{height:100%}#map{position:relative}#menu-toggle{position:absolute;width:95px;left:10px;top:80px;z-index:2}.form-control{margin-left:20px;margin-right:20px;width:210px}/*!
+#map,#wrapper,.container-fluid,.row,body,html{height:100%}.sidebar-nav li a,.sidebar-nav li a:active,.sidebar-nav li a:focus{text-decoration:none}#page-content-wrapper{padding:0;height:calc(100% - 52px)}#map{position:relative}.form-control{margin-left:20px;margin-right:20px;width:210px}h1{padding-bottom:0}.navbar{margin-bottom:0}/*!
  * Start Bootstrap - Simple Sidebar (http://startbootstrap.com/)
  * Copyright 2013-2016 Start Bootstrap
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
