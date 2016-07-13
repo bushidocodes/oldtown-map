@@ -56,7 +56,7 @@
                 <!--Append data model to the sidebar-->
                 <li class="h3">Historic Sites</li>
                 <div data-bind="foreach: filteredSites">
-                    <li data-bind="click: $root.selectSite">
+                    <li data-bind="click: $root.selectSite, event: { mouseover: $root.highlightMarkerOfSite, mouseout: $root.unhighlightMarkerOfSite }">
                         <a data-bind="text: name"></a>
                     </li>
                 </div>

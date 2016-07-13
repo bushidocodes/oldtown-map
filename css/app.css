@@ -71,3 +71,13 @@ h1 {
     z-index: 99;
     visibility: hidden;
 }
+
+.wikiImg {
+    -webkit-filter: grayscale(100%); /* Chrome, Safari, Opera */
+    filter: grayscale(100%);
+}
+
+.wikiImg:hover {
+    -webkit-filter: none; /* Chrome, Safari, Opera */
+    filter: none;
+}

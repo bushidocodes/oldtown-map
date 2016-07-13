@@ -25,6 +25,8 @@ var Site = function Site(name, address, lat, lng, description, wikipediaID) {
 var infoWindow = null;
 var markers = ko.observableArray();
 var wasWarnedAboutWikipedia = false;
+var defaultIcon;
+var highlightedIcon;
 
 // Custom Google Maps Style
 var styles = [{ "featureType": "all", "elementType": "labels.text.fill", "stylers": [{ "saturation": 36 }, { "color": "#000000" }, { "lightness": 40 }] }, { "featureType": "all", "elementType": "labels.text.stroke", "stylers": [{ "visibility": "on" }, { "color": "#000000" }, { "lightness": 16 }] }, { "featureType": "all", "elementType": "labels.icon", "stylers": [{ "visibility": "off" }] }, { "featureType": "administrative", "elementType": "geometry.fill", "stylers": [{ "color": "#000000" }, { "lightness": 20 }] }, { "featureType": "administrative", "elementType": "geometry.stroke", "stylers": [{ "color": "#000000" }, { "lightness": 17 }, { "weight": 1.2 }] }, { "featureType": "landscape", "elementType": "geometry", "stylers": [{ "color": "#000000" }, { "lightness": 20 }] }, { "featureType": "poi", "elementType": "geometry", "stylers": [{ "color": "#000000" }, { "lightness": 21 }] }, { "featureType": "road.highway", "elementType": "geometry.fill", "stylers": [{ "color": "#000000" }, { "lightness": 17 }] }, { "featureType": "road.highway", "elementType": "geometry.stroke", "stylers": [{ "color": "#000000" }, { "lightness": 29 }, { "weight": 0.2 }] }, { "featureType": "road.arterial", "elementType": "geometry", "stylers": [{ "color": "#000000" }, { "lightness": 18 }] }, { "featureType": "road.local", "elementType": "geometry", "stylers": [{ "color": "#000000" }, { "lightness": 16 }] }, { "featureType": "transit", "elementType": "geometry", "stylers": [{ "color": "#000000" }, { "lightness": 19 }] }, { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#000000" }, { "lightness": 17 }] }];
@@ -39,6 +41,9 @@ function initMap() {
         styles: styles
     });
 
+    defaultIcon = makeMarkerIcon('ffffff');
+    highlightedIcon = makeMarkerIcon('ff661a');
+
     // Iterate through the array of sites, create a marker for each site, add a listener on the marker that bounces the marker twice and renders the infowindow for this marker, and add the marker to the markers array
     // All markers are diplayed on the map upon initial load
 
@@ -47,10 +52,18 @@ function initMap() {
         var marker = new google.maps.Marker({
             position: { lat: site.lat, lng: site.lng },
             map: map,
-            title: site.name
+            title: site.name,
+            icon: defaultIcon
         });
         marker.addListener('click', function () {
             vm.selectMarker(marker);
+        });
+        //Event Listeners for mouseover and mouseout that modify the marker colors upon hover
+        marker.addListener('mouseover', function () {
+            this.setIcon(highlightedIcon);
+        });
+        marker.addListener('mouseout', function () {
+            this.setIcon(defaultIcon);
         });
         markers.push(marker);
     };
@@ -116,6 +129,30 @@ function bounce(marker, numberOfBounces) {
     setTimeout(function () {
         marker.setAnimation(null);
     }, 700 * numberOfBounces);
+}
+
+// makeMarkerIcon() takes in a color and creates a new marker icon of that color.
+// This function was presented in the Udacity course, but has been deprecated in version 3.11 of the maps API
+// Functionally Equivalent function below.
+// function makeMarkerIcon(markerColor) {
+//     var markerImage = new google.maps.MarkerImage(
+//         'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor + '|40|_|%E2%80%A2',
+//         new google.maps.Size(21,34), //dimensions of marker icon
+//         new google.maps.Point(0,0), //origin of marker icon
+//         new google.maps.Point(10, 34), //anch
+//         new google.maps.Size(21, 34));
+//     return markerImage;
+// }
+
+function makeMarkerIcon(markerColor) {
+    var markerIcon = {
+        url: 'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|' + markerColor + '|40|_|%E2%80%A2',
+        size: new google.maps.Size(21, 34), //dimensions of marker icon
+        origin: new google.maps.Point(0, 0), //origin of marker icon
+        anchor: new google.maps.Point(10, 34), //anch
+        scaledSize: new google.maps.Size(21, 34)
+    };
+    return markerIcon;
 }
 
 // pullImagesFromWikipedia() is a function that issues a JSONP format Ajax request to the Wikipedia Mediawiki API
@@ -184,7 +221,7 @@ function pullImagesFromWikipedia(site, wikipediaID) {
             },
             dataType: "jsonp",
             success: function success(data) {
-                var imageHTML = '<a href="' + data.query.pages[Object.keys(data.query.pages)].imageinfo[0].url + '"><img src="' + data.query.pages[Object.keys(data.query.pages)].imageinfo[0].url + '" height="20%" width="20%" class="img-circle"></a>';
+                var imageHTML = '<a href="' + data.query.pages[Object.keys(data.query.pages)].imageinfo[0].url + '"><img class="wikiImg img-circle" src="' + data.query.pages[Object.keys(data.query.pages)].imageinfo[0].url + '" height="20%" width="20%"></a>';
                 infoWindow.setContent(infoWindow.content + imageHTML);
             }
         });
@@ -229,6 +266,28 @@ var ViewModel = function ViewModel() {
         clearInfoWindow();
         bounce(markerOfSelectedSite[0], 2);
         generateInfoWindow(site, map, markerOfSelectedSite[0], 1400);
+    };
+
+    self.highlightMarkerOfSite = function (site) {
+        var markerOfSelectedSite = jQuery.grep(markers(), function (marker) {
+            return marker.title === site.name;
+        });
+        markerOfSelectedSite[0].setIcon(highlightedIcon);
+    };
+
+    self.unhighlightMarkerOfSite = function (site) {
+        var markerOfSelectedSite = jQuery.grep(markers(), function (marker) {
+            return marker.title === site.name;
+        });
+        markerOfSelectedSite[0].setIcon(defaultIcon);
+    };
+
+    self.markerOfSite = function (site) {
+        var markerOfSite = jQuery.grep(markers(), function (marker) {
+            return marker.title === site.name;
+        });
+        console.log(markerOfSite[0]);
+        return markerOfSite[0];
     };
 
     self.selectMarker = function (marker) {
