@@ -63,3 +63,11 @@ h1 {
 .navbar {
     margin-bottom: 0px;
 }
+
+#wikipediaAlert {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 99;
+    visibility: hidden;
+}

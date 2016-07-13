@@ -79,7 +79,12 @@ gulp.task('images', function () {
 
 // install bower components
 gulp.task('bower', function () {
-    return bower().pipe(gulp.dest(buildDir + '/bower_components'));
+    console.log(buildDir + '/bower_components');
+    return bower({
+        directory: './dist/bower_components',
+        // cwd: './dist'
+    })
+    .pipe(gulp.dest(buildDir));
 });
 
 gulp.task('default', ['html','css','js','images','bower']);
