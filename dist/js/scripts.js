@@ -15,7 +15,6 @@ var Site = function Site(name, address, lat, lng, description, wikipediaID) {
     self.lng = lng;
     self.description = description;
     self.wikipediaID = wikipediaID;
-    self.images = ko.observableArray();
 };
 
 // Declare Google Maps UI elements
@@ -51,8 +50,7 @@ function initMap() {
             title: site.name
         });
         marker.addListener('click', function () {
-            bounce(marker, 2);
-            generateInfoWindow(site, map, marker);
+            vm.selectMarker(marker);
         });
         markers.push(marker);
     };
@@ -71,8 +69,8 @@ ko.bindingHandlers.updateMarkers = {
             var _marker = markers()[i];
             var markerInFilteredSites = false;
             for (var j = 0; j < vm.filteredSites().length; j++) {
-                var _site = vm.filteredSites()[j];
-                if (_marker.title === _site.name) {
+                var site = vm.filteredSites()[j];
+                if (_marker.title === site.name) {
                     markerInFilteredSites = true;
                 };
             };
@@ -92,43 +90,46 @@ function clearInfoWindow() {
     };
 };
 
-function generateInfoWindow(site, map, marker) {
-    clearInfoWindow();
+// generateInfoWindow() issues API calls to Wikipedia for images, generates a content string and infoWindow, and then opens the infoWindow after a delay
+// The delay gives the Wikipedia JSONP API functions to complete and append data to the contentString before being opened, with helps ensures the infoWindow auto-pans properly
+function generateInfoWindow(site, map, marker, delay) {
     if (site.wikipediaID) pullImagesFromWikipedia(site, site.wikipediaID);
     var contentString = '<strong>' + site.name + '</strong>' + '<p>' + site.description + '</p>';
     if (site.wikipediaID) {
-        contentString += '<a href="https://en.wikipedia.org/?curid=' + site.wikipediaID + '">View Wikipedia Page</a><br>';
+        contentString += '<strong>Images From <a href="https://en.wikipedia.org/?curid=' + site.wikipediaID + '">Wikipedia Page</a></strong><br>';
     };
     infoWindow = new google.maps.InfoWindow({
         content: contentString
     });
-    infoWindow.open(map, marker);
+    setTimeout(function () {
+        infoWindow.open(map, marker);
+    }, delay);
 };
 
+// bounce() helper function bounced a marker a set number of times
 function bounce(marker, numberOfBounces) {
     if (marker.getAnimation() !== null) {
         marker.setAnimation(null);
-    } else {
-        // The BOUNCE animation lasts 700ms, so calculate duration and then use setTimeout()
-        marker.setAnimation(google.maps.Animation.BOUNCE);
-        setTimeout(function () {
-            marker.setAnimation(null);
-        }, 700 * numberOfBounces);
     }
+    // The BOUNCE animation lasts 700ms, so calculate duration and then use setTimeout()
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+    setTimeout(function () {
+        marker.setAnimation(null);
+    }, 700 * numberOfBounces);
 }
 
-// pullImagesFromWikipedia is a function that issues a JSONP format Ajax request to the Wikipedia Mediawiki API
+// pullImagesFromWikipedia() is a function that issues a JSONP format Ajax request to the Wikipedia Mediawiki API
 // It retrieves all images displayed on the site's Wikipedia page, filters out known junk images based on the name of the image, and then calls the helper function resolveWikipediaImageURL for iamges that pass the filter.
 // Why does this function need to take a seperate wikipediaID if wikipediaID is an attribute of class Site????
 function pullImagesFromWikipedia(site, wikipediaID) {
     var wikipediaEndpoint = "https://en.wikipedia.org/w/api.php";
-    void 0;
+    //Start a timeout that triggers a wikipedia warning alert if eight seconds elapse without a successful response. This checks wasWarnedAboutWikipedia to make sure that the alert only occurs once
     var wikiRequestTimeout;
     if (!wasWarnedAboutWikipedia) {
         wikiRequestTimeout = setTimeout(function () {
             $("#wikipediaAlert").css({ "visibility": "visible" });
             wasWarnedAboutWikipedia = true;
-        }, 100);
+        }, 8000);
     }
     $.ajax({
         url: wikipediaEndpoint,
@@ -163,18 +164,13 @@ function pullImagesFromWikipedia(site, wikipediaID) {
                 if (imageName.indexOf("question") >= 0) process = false;
                 if (imageName.indexOf("Ambox") >= 0) process = false;
                 if (imageName.indexOf("Nuvola") >= 0) process = false;
+                if (imageName.indexOf("btn") >= 0) process = false;
                 if (process) resolveWikipediaImageURL(site, imageName);
             };
-        },
-        error: function error(x, t, m) {
-            if (t === "timeout") {
-                void 0;
-            }
         }
     });
 
     // resolveWikipediaImageURL is a helper function that issues a second Ajax request in JSONP format to retrieve the image URL, formats an <img> tag with style information, and then appends the tag to the current infoWindow.
-    // It also appends the URL to the site.images array, but this is probably NOT USED
     function resolveWikipediaImageURL(site, imageName) {
         $.ajax({
             url: wikipediaEndpoint,
@@ -188,9 +184,8 @@ function pullImagesFromWikipedia(site, wikipediaID) {
             },
             dataType: "jsonp",
             success: function success(data) {
-                var imageHTML = '<img src="' + data.query.pages[Object.keys(data.query.pages)].imageinfo[0].url + '" height="20%" width="20%" class="img-circle">';
+                var imageHTML = '<a href="' + data.query.pages[Object.keys(data.query.pages)].imageinfo[0].url + '"><img src="' + data.query.pages[Object.keys(data.query.pages)].imageinfo[0].url + '" height="20%" width="20%" class="img-circle"></a>';
                 infoWindow.setContent(infoWindow.content + imageHTML);
-                site.images.push(data.query.pages[Object.keys(data.query.pages)].imageinfo[0].url);
             }
         });
     };
@@ -231,8 +226,18 @@ var ViewModel = function ViewModel() {
         var markerOfSelectedSite = jQuery.grep(markers(), function (marker) {
             return marker.title === site.name;
         });
+        clearInfoWindow();
         bounce(markerOfSelectedSite[0], 2);
-        generateInfoWindow(site, map, markerOfSelectedSite[0]);
+        generateInfoWindow(site, map, markerOfSelectedSite[0], 1400);
+    };
+
+    self.selectMarker = function (marker) {
+        var siteOfSelectedMarker = jQuery.grep(self.filteredSites(), function (site) {
+            return site.name === marker.title;
+        });
+        clearInfoWindow();
+        bounce(marker, 2);
+        generateInfoWindow(siteOfSelectedMarker[0], map, marker, 1400);
     };
 }; //endViewModel
 
