@@ -286,7 +286,7 @@ var ViewModel = function ViewModel() {
         var markerOfSite = jQuery.grep(markers(), function (marker) {
             return marker.title === site.name;
         });
-        console.log(markerOfSite[0]);
+        void 0;
         return markerOfSite[0];
     };
 
