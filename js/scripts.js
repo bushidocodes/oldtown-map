@@ -20,10 +20,12 @@ var Site = function Site(name, address, lat, lng, description, wikipediaID) {
 
 // Declare Google Maps UI elements
 // infoWindow is a single global object in order to ensure that only one infoWindow is rendered at a time
+// wasWarned is a boolean to make sure that the end user is only warned once about Wikipedia errors
 
 
 var infoWindow = null;
 var markers = ko.observableArray();
+var wasWarnedAboutWikipedia = false;
 
 // Custom Google Maps Style
 var styles = [{ "featureType": "all", "elementType": "labels.text.fill", "stylers": [{ "saturation": 36 }, { "color": "#000000" }, { "lightness": 40 }] }, { "featureType": "all", "elementType": "labels.text.stroke", "stylers": [{ "visibility": "on" }, { "color": "#000000" }, { "lightness": 16 }] }, { "featureType": "all", "elementType": "labels.icon", "stylers": [{ "visibility": "off" }] }, { "featureType": "administrative", "elementType": "geometry.fill", "stylers": [{ "color": "#000000" }, { "lightness": 20 }] }, { "featureType": "administrative", "elementType": "geometry.stroke", "stylers": [{ "color": "#000000" }, { "lightness": 17 }, { "weight": 1.2 }] }, { "featureType": "landscape", "elementType": "geometry", "stylers": [{ "color": "#000000" }, { "lightness": 20 }] }, { "featureType": "poi", "elementType": "geometry", "stylers": [{ "color": "#000000" }, { "lightness": 21 }] }, { "featureType": "road.highway", "elementType": "geometry.fill", "stylers": [{ "color": "#000000" }, { "lightness": 17 }] }, { "featureType": "road.highway", "elementType": "geometry.stroke", "stylers": [{ "color": "#000000" }, { "lightness": 29 }, { "weight": 0.2 }] }, { "featureType": "road.arterial", "elementType": "geometry", "stylers": [{ "color": "#000000" }, { "lightness": 18 }] }, { "featureType": "road.local", "elementType": "geometry", "stylers": [{ "color": "#000000" }, { "lightness": 16 }] }, { "featureType": "transit", "elementType": "geometry", "stylers": [{ "color": "#000000" }, { "lightness": 19 }] }, { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#000000" }, { "lightness": 17 }] }];
@@ -120,6 +122,14 @@ function bounce(marker, numberOfBounces) {
 // Why does this function need to take a seperate wikipediaID if wikipediaID is an attribute of class Site????
 function pullImagesFromWikipedia(site, wikipediaID) {
     var wikipediaEndpoint = "https://en.wikipedia.org/w/api.php";
+    void 0;
+    var wikiRequestTimeout;
+    if (!wasWarnedAboutWikipedia) {
+        wikiRequestTimeout = setTimeout(function () {
+            $("#wikipediaAlert").css({ "visibility": "visible" });
+            wasWarnedAboutWikipedia = true;
+        }, 100);
+    }
     $.ajax({
         url: wikipediaEndpoint,
         cache: true,
@@ -131,6 +141,7 @@ function pullImagesFromWikipedia(site, wikipediaID) {
         },
         dataType: "jsonp",
         success: function success(data) {
+            clearTimeout(wikiRequestTimeout);
             var imageNames = [];
             var imageURLs = [];
             for (var i = 0; i < data.query.pages[wikipediaID].images.length; i++) {
@@ -154,6 +165,11 @@ function pullImagesFromWikipedia(site, wikipediaID) {
                 if (imageName.indexOf("Nuvola") >= 0) process = false;
                 if (process) resolveWikipediaImageURL(site, imageName);
             };
+        },
+        error: function error(x, t, m) {
+            if (t === "timeout") {
+                void 0;
+            }
         }
     });
 
