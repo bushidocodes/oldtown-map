@@ -26,10 +26,10 @@ var gutil = require('gulp-util');
 // var browserify = require('browserify');
 
 // Define directory structure of project
-var htmlSrc = './*.html';
-var cssSrc = './css/*.css';
-var jsSrc = './js/*.js';
-var imgSrc = './images/*.png';
+var htmlSrc = './src/*.html';
+var cssSrc = './src/css/*.css';
+var jsSrc = './src/js/*.js';
+var imgSrc = './src/images/*.png';
 var buildDir = './dist';
 
 
@@ -79,12 +79,12 @@ gulp.task('images', function () {
 
 // install bower components
 gulp.task('bower', function () {
-    console.log(buildDir + '/bower_components');
+    // console.log(buildDir + '/bower_components');
     return bower({
         directory: './dist/bower_components',
         // cwd: './dist'
     })
-    .pipe(gulp.dest(buildDir));
+    .pipe(gulp.dest(buildDir + '/bower_components'));
 });
 
 gulp.task('default', ['html','css','js','images','bower']);
