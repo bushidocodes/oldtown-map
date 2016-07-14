@@ -4,85 +4,27 @@ height: 100%;
 
 
 /*Override default simple-sidebar padding to render map directly against sidebar*/
-#page-content-wrapper {
-        padding: 0px;
-}
-
-html, body { height: 100%; }
-
-#page-content-wrapper {
-    height: calc(100% - 52px);
-}
-
-#wrapper, .container-fluid, .row {
-    /*min-height: 100px;*/
+html,
+body {
     height: 100%;
-    }
-
-#map {
-    position: relative;
-    height: 100%;
-    /*margin-top:50px;*/
 }
 
-/*#menu-toggle {
-    position: absolute;
-    width: 95px;
-    left: 10px;
-    top: 80px;
-    z-index: 2;
-}*/
+h1 {
+    padding-bottom: 0;
+}
+
+/*Override Simple Sidebar Styles*/
 
 .form-control {
     margin-left: 20px;
     margin-right: 20px;
     width:210px;
 }
-/*
-#map {
-    min-height: 300px;
-    height: auto;
-}*/
-/*
-.large-scrollable-menu {
-    height: auto;
-    max-height: 600px;
-    overflow-x: hidden;
-}
 
-.small-scrollable-menu {
-    height: auto;
-    max-height: 120px;
-    overflow-x: hidden;
-}*/
-
-h1 {
-    padding-bottom: 0px;
-}
+/*Override Bootstrap Styles*/
 
 .navbar {
-    margin-bottom: 0px;
-}
-
-#wikipediaAlert {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    z-index: 99;
-    visibility: hidden;
-}
-
-.wikiImg {
-    -webkit-filter: grayscale(100%); /* Chrome, Safari, Opera */
-    filter: grayscale(100%);
-}
-
-.wikiImg:hover {
-    -webkit-filter: none; /* Chrome, Safari, Opera */
-    filter: none;
-}
-
-.navbar {
+    margin-bottom: 0;
     min-width:200px;
 }
 
@@ -90,25 +32,63 @@ h1 {
     margin-left: 10px;
 }
 
-/*Reimplementing btn-inverse from Bootstrap 2 based on http://www.kelasabil.com/en/library/bootstrap/reviving-inverse-button-bootstrap-3*/
+/*Render Images pulled from Wikipedia as grayscale unless hovered over*/
+
+.wiki-img {
+    -webkit-filter: grayscale(100%); /* Chrome, Safari, Opera */
+    filter: grayscale(100%);
+}
+
+.wiki-img:hover {
+    -webkit-filter: none; /* Chrome, Safari, Opera */
+    filter: none;
+}
+
+/*Make Google Maps render using all height below navbar*/
+
+#page-content-wrapper {
+    height: calc(100% - 52px);
+    padding: 0;
+}
+
+#wrapper, .container-fluid, .row {
+    height: 100%;
+}
+
+#map {
+    position: relative;
+    height: 100%;
+}
+
+/*Render Wikipedia Errors with Alert that hovers above content*/
+
+#wikipedia-alert {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 99;
+    visibility: hidden;
+}
+
+/*Reimplementing btn-inverse from Bootstrap 2. Code from http://www.kelasabil.com/en/library/bootstrap/reviving-inverse-button-bootstrap-3*/
 .btn-inverse {
-  color: #ffffff;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #363636;
-  *background-color: #222222;
-  background-image: -moz-linear-gradient(top, #444444, #222222);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#444444), to(#222222));
-  background-image: -webkit-linear-gradient(top, #444444, #222222);
-  background-image: -o-linear-gradient(top, #444444, #222222);
-  background-image: linear-gradient(to bottom, #444444, #222222);
-  background-repeat: repeat-x;
-  border-color: #222222 #222222 #000000;
-  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff444444', endColorstr='#ff222222', GradientType=0);
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, .2);
-  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+    color: #ffffff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    background-color: #363636;
+    *background-color: #222222;
+    background-image: -moz-linear-gradient(top, #444444, #222222);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#444444), to(#222222));
+    background-image: -webkit-linear-gradient(top, #444444, #222222);
+    background-image: -o-linear-gradient(top, #444444, #222222);
+    background-image: linear-gradient(to bottom, #444444, #222222);
+    background-repeat: repeat-x;
+    border-color: #222222 #222222 #000000;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff444444', endColorstr='#ff222222', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, .2);
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, 0.075); /* Chrome, Safari, Opera */
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, 0.075);
 }
 
 .btn-inverse:hover,
@@ -117,18 +97,18 @@ h1 {
 .btn-inverse.active,
 .btn-inverse.disabled,
 .btn-inverse[disabled] {
-  color: #ffffff;
-  background-color: #222222;
-  *background-color: #151515;
-  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
-             box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+    color: #ffffff;
+    background-color: #222222;
+    *background-color: #151515;
+    -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125); /* Chrome, Safari, Opera */
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
 
 .btn-inverse:active,
 .btn-inverse.active {
-  background-color: #080808 \9;
+    background-color: #080808 \9;
 }
 
 .btn-inverse.active {
-  color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 0.75);
 }
