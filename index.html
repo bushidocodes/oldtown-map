@@ -55,7 +55,8 @@
                 <!--<input type="text" class="form-control" data-bind="textInput: searchString, updateMarkers" />-->
                 <!--Append data model to the sidebar-->
                 <li class="h3">Historic Sites</li>
-                <li><input type="text" class="form-control" data-bind="textInput: searchString, updateMarkers" placeholder="Search" /></li>
+                <li><input type="text" class="form-control" data-bind="textInput: searchString, updateMarkers" placeholder="Search"
+                    /></li>
                 <div data-bind="foreach: filteredSites">
                     <li data-bind="click: $root.selectSite, event: { mouseover: $root.highlightMarkerOfSite, mouseout: $root.unhighlightMarkerOfSite }">
                         <a data-bind="text: name"></a>
@@ -71,7 +72,9 @@
 
                     <li>
                         <div class="navbar-brand">
-                            <span id="menu-toggle" class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+                            <button type="button" class="btn btn-default" id="menu-toggle">
+                                <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+                            </button>
                         </div>
                     </li>
                     <li>
@@ -82,7 +85,7 @@
 
             </div>
         </nav>
-<!--
+        <!--
         <div data-bind="modal: {
             visible: modalVisible,
             dialogCss: modal-lg,
