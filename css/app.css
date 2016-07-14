@@ -85,3 +85,7 @@ h1 {
 .navbar {
     min-width:200px;
 }
+
+.navbar-text {
+    margin-left: 10px;
+}
