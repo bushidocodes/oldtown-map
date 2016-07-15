@@ -403,6 +403,9 @@ var ViewModel = function () {
             "118 North Washington St, Alexandria, Virginia 22314",
             38.806271,
             -77.047460,
+            "This beautiful English country-style church was built between 1767-1773 and was attended by George " +
+            "Washington & Robert E. Lee. Tours available Mon.-Sat. 9 a.m.-4 p.m.; Sun. 2-4 p.m., with Sun. morning " +
+            "and evening worship services.",
             7769126
         ),
         new Site(
