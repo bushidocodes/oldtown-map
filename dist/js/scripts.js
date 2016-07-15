@@ -327,7 +327,11 @@ var ViewModel = function ViewModel() {
             return marker.title === site.name;
         });
         clearInfoWindow();
-        $("#wrapper").toggleClass("toggled");
+        //Don't close the sidebar automatically if the window is so wide that the infowindow is fully visible on the visible portion of the map div
+        if ($(window).width() < 1500) {
+            $("#wrapper").toggleClass("toggled");
+        }
+        map.panTo({ lat: site.lat, lng: site.lng });
         bounce(markerOfSelectedSite[0], 2);
         generateInfoWindow(site, map, markerOfSelectedSite[0], 1400);
     };
