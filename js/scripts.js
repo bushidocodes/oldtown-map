@@ -327,6 +327,7 @@ var ViewModel = function ViewModel() {
             return marker.title === site.name;
         });
         clearInfoWindow();
+        $("#wrapper").toggleClass("toggled");
         bounce(markerOfSelectedSite[0], 2);
         generateInfoWindow(site, map, markerOfSelectedSite[0], 1400);
     };
