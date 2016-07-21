@@ -11,13 +11,12 @@
 
 class Site {
     constructor(name, address, lat, lng, description, wikipediaID) {
-        var self = this;
-        self.name = name;
-        self.address = address;
-        self.lat = lat;
-        self.lng = lng;
-        self.description = description;
-        self.wikipediaID = wikipediaID;
+        this.name = name;
+        this.address = address;
+        this.lat = lat;
+        this.lng = lng;
+        this.description = description;
+        this.wikipediaID = wikipediaID;
     }
 }
 
@@ -36,8 +35,8 @@ var highlightedIcon;
 // Global variable that stores a boolean to indicate if the end-use has been warned about Wikipedia or not.
 //This is to ensure an end-user is only warned once.
 
-var wasWarnedAboutWikipedia = false;
-var wasWarnedAboutMaps = false;
+var wasWarnedAboutWikipedia = ko.observable(false);
+var wasWarnedAboutMaps = ko.observable(false);
 
 // Custom Google Maps Style
 
@@ -199,10 +198,10 @@ function pullImagesFromWikipedia(site, wikipediaID) {
     // Start a timeout that triggers a wikipedia warning alert if eight seconds elapse without a successful response.
     // This checks wasWarnedAboutWikipedia to make sure that the alert only occurs once
     var wikiRequestTimeout;
-    if (!wasWarnedAboutWikipedia) {
+    if (!wasWarnedAboutWikipedia()) {
         wikiRequestTimeout = setTimeout(function () {
-            $('#wikipedia-alert').css({ 'visibility': 'visible' });
-            wasWarnedAboutWikipedia = true;
+
+            wasWarnedAboutWikipedia(true);
         }, 3000);
     }
     $.ajax({
@@ -272,7 +271,7 @@ function pullImagesFromWikipedia(site, wikipediaID) {
 
 // googleError performs error handling for the Google Maps API.
 function googleMapsError() {
-    $('#google-maps-alert').css({ 'visibility': 'visible' });
+    wasWarnedAboutMaps(true);
 }
 
 /*updateMarkers() is a custom Knockout binding handler that performs real time processing on the menu search field
