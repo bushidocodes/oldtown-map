@@ -13,6 +13,10 @@ h1 {
     padding-bottom: 0;
 }
 
+.site {
+    cursor: pointer;
+}
+
 /*Override Simple Sidebar Styles*/
 
 .form-control {
@@ -70,10 +74,18 @@ h1 {
     visibility: hidden;
 }
 
+#google-maps-alert {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 99;
+    visibility: hidden;
+}
+
 /*Reimplementing btn-inverse from Bootstrap 2. Code from http://www.kelasabil.com/en/library/bootstrap/reviving-inverse-button-bootstrap-3*/
 .btn-inverse {
     color: #ffffff;
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+
     background-color: #363636;
     *background-color: #222222;
     background-image: -moz-linear-gradient(top, #444444, #222222);
@@ -86,7 +98,9 @@ h1 {
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff444444', endColorstr='#ff222222', GradientType=0);
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, .2);
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    /*text-shadow: 0 -1px 0 rgba(0, 0, 0, .2);*/
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, 0.075); /* Mozilla */
     -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, 0.075); /* Chrome, Safari, Opera */
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, 0.075);
 }
@@ -100,13 +114,14 @@ h1 {
     color: #ffffff;
     background-color: #222222;
     *background-color: #151515;
+    -moz-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125); /* Chrome, Safari, Opera */
     -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125); /* Chrome, Safari, Opera */
     box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
 
 .btn-inverse:active,
 .btn-inverse.active {
-    background-color: #080808 \9;
+    background-color: #080808 \9; /* CSS Hack for IE*/
 }
 
 .btn-inverse.active {

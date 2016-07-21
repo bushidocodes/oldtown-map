@@ -25,8 +25,6 @@ var Site = function Site(name, address, lat, lng, description, wikipediaID) {
     self.wikipediaID = wikipediaID;
 };
 
-;
-
 // Declare Google Maps UI elements
 // infoWindow is a single global object in order to ensure that only one infoWindow is rendered at a time
 // wasWarned is a boolean to make sure that the end user is only warned once about Wikipedia errors
@@ -43,6 +41,7 @@ var highlightedIcon;
 //This is to ensure an end-user is only warned once.
 
 var wasWarnedAboutWikipedia = false;
+var wasWarnedAboutMaps = false;
 
 // Custom Google Maps Style
 
@@ -129,16 +128,16 @@ function initMap() {
 
     for (var i = 0; i < vm.sites().length; i++) {
         _loop();
-    };
-};
+    }
+}
 
 // clearInfoWindow() gracefully closes the infoWindow if it is open
 
 function clearInfoWindow() {
     if (infoWindow) {
         infoWindow.close();
-    };
-};
+    }
+}
 
 /* generateInfoWindow() issues API calls to Wikipedia for images, generates a content string and infoWindow, and then
 opens the infoWindow after a delay.  The delay gives the Wikipedia JSONP API functions to complete and append data to
@@ -149,21 +148,21 @@ function generateInfoWindow(site, map, marker, delay) {
     var contentString = '<strong>' + site.name + '</strong>' + '<p>' + site.description + '</p>';
     if (site.wikipediaID) {
         contentString += '<strong>Images From <a href="https://en.wikipedia.org/?curid=' + site.wikipediaID + '">Wikipedia Page</a></strong><br>';
-    };
+    }
     infoWindow = new google.maps.InfoWindow({
         content: contentString
     });
     setTimeout(function () {
         infoWindow.open(map, marker);
     }, delay);
-};
+}
 
 // bounce() helper function bounced a marker a set number of times
 
 function bounce(marker, numberOfBounces) {
     if (marker.getAnimation() !== null) {
         marker.setAnimation(null);
-    };
+    }
     // The BOUNCE animation lasts 700ms, so calculate duration and then use setTimeout()
     marker.setAnimation(google.maps.Animation.BOUNCE);
     setTimeout(function () {
@@ -183,7 +182,7 @@ function makeMarkerIcon(markerColor) {
         scaledSize: new google.maps.Size(21, 34)
     };
     return markerIcon;
-};
+}
 
 /*pullImagesFromWikipedia() is a function that issues a JSONP format Ajax request to the Wikipedia Mediawiki API.
 It retrieves all images displayed on the site's Wikipedia page, filters out known junk images based on the name of the
@@ -200,8 +199,8 @@ function pullImagesFromWikipedia(site, wikipediaID) {
         wikiRequestTimeout = setTimeout(function () {
             $('#wikipedia-alert').css({ 'visibility': 'visible' });
             wasWarnedAboutWikipedia = true;
-        }, 8000);
-    };
+        }, 3000);
+    }
     $.ajax({
         url: wikipediaEndpoint,
         cache: true,
@@ -237,7 +236,7 @@ function pullImagesFromWikipedia(site, wikipediaID) {
                 if (imageName.indexOf('Nuvola') >= 0) process = false;
                 if (imageName.indexOf('btn') >= 0) process = false;
                 if (process) resolveWikipediaImageURL(site, imageName);
-            };
+            }
         }
     });
 
@@ -260,8 +259,13 @@ function pullImagesFromWikipedia(site, wikipediaID) {
                 infoWindow.setContent(infoWindow.content + imageHTML);
             }
         });
-    };
-};
+    }
+}
+
+// googleError performs error handling for the Google Maps API.
+function googleMapsError() {
+    $('#google-maps-alert').css({ 'visibility': 'visible' });
+}
 
 /*updateMarkers() is a custom Knockout binding handler that performs real time processing on the menu search field
 It clears the infoWindow if open and then iterates through the markers array.
@@ -278,10 +282,10 @@ ko.bindingHandlers.updateMarkers = {
                 var site = vm.filteredSites()[j];
                 if (_marker.title === site.name) {
                     markerInFilteredSites = true;
-                };
-            };
+                }
+            }
             markerInFilteredSites ? _marker.setMap(map) : _marker.setMap(null);
-        };
+        }
     }
 };
 
@@ -314,7 +318,7 @@ var ViewModel = function ViewModel() {
                 //Changed syntax from return siteNoCase.includes(filter); to support IE11
                 if (siteNoCase.indexOf(filter) >= 0) return true;
             });
-        };
+        }
     });
 
     // Behaviors
