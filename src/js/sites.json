@@ -1,0 +1,204 @@
+{
+    "sites": [
+        {
+            "name": "Ramsay House & Visitor's Center",
+            "address": "221 King St, Alexandria, VA 22314",
+            "location": {
+                "lat": 38.804628,
+                "lng": -77.042357
+            },
+            "description": "Alexandria’s Visitor's Center was originally the home of William Ramsay, one of the three original Scottish settlers that settled the area in November 1748 and petitioned the House of Burgesses to establish a town.",
+            "wikipediaID": null
+        },
+        {
+            "name": "Carlyle House",
+            "address": "121 N Fairfax St, Alexandria, VA 22314",
+            "location": {
+                "lat": 38.805228,
+                "lng": 77.042012
+            },
+            "description": "A Georgian Palladian manor house built in 1753 by merchant and city founder John Carlyle. Here, five royal governors and General Braddock met to discuss funding of the French and Indian War. Daily tours, youth programs, special events, exhibits and lectures offer visitors a chance to experience eighteenth century life through the eyes of one man and his family as he made the journey from English citizen to American patriot. The story of Carlyle House parallels the early history of Alexandria, colonial Virginia, and America and is brought to life through costumed interpreters, guides and fun family programs. Tues.-Sat. 10 a.m.-4 p.m.; Sun. noon-4 p.m. (tours on the hour and half hour, last tour at 4).",
+            "wikipediaID": 12593872
+        },
+        {
+            "name": "Gadsby's Tavern Museum",
+            "address": "134 N Royal St, Alexandria, VA 22314",
+            "location": {
+                "lat": 38.805554,
+                "lng": -77.043619
+            },
+            "description": "Discover Alexandria’s five-star hotel of the 18th century! The Museum consists of the c. 1785 tavern and the 1792 City Tavern and Hotel. Both were constructed by John Wise but made famous by tavernkeeper John Gadsby. His establishment was the center of political, business, and social life in Alexandria and in the new federal city of Washington, D.C. The City Tavern’s Ballroom was the location of George Washington’s Birthnight Ball in 1798 and 1799, as well as Thomas Jefferson’s Inaugural Banquet in 1801. The museum offers tours, programs and special events. Apr.-Oct.: Sun. & Mon. 1-5 p.m., Tues.-Sat. 10 a.m.-5 p.m.; Nov.-March.: Wed.-Sat. 11 a.m.-4 p.m., Sun. 1-4 p.m",
+            "wikipediaID": 3903736
+        },
+        {
+            "name": "Spite House",
+            "address": "523 Queen St, Alexandria, VA 22314",
+            "location": {
+                "lat": 38.807307,
+                "lng": -77.045064
+            },
+            "description": "The Spite House was built by John Hollensbury in 1830 to keep horse drawn wagons and loiterers out of his alley. At seven feet wide and 25 feet deep, the home is 325 square feet over two floors.",
+            "wikipediaID": null
+        },
+        {
+            "name": "Revolutionary War Cobblestones",
+            "address": "607 Princess St, Alexandria, VA 22314",
+            "location": {
+                "lat": 38.808553,
+                "lng": -77.045503
+            },
+            "description": "The 600 block of Princess Street retains the historic Revolutionary War cobblestone streets that once lined much of Old Town. Local folklore says the cobblestones were brought from England in ships as ballast and were laid by captured Hessians, the German mercenaries hired to fight for the British during the Revolutionary War.",
+            "wikipediaID": null
+        },
+        {
+            "name": "Robert E. Lee's Boyhood Home",
+            "address": "607 Oronoco Street, Alexandria, Virginia 22314",
+            "location": {
+                "lat": 38.809808,
+                "lng": -77.045208
+            },
+            "description": "Robert E. Lee left this home that he loved so well to enter West Point. After Appomattox he returned and climbed the wall to see if the snowballs were in bloom. George Washington dined here when it was the home of William Fitzhugh, Lee’s kinsman and his wife’s grandfather. Lafayette visited here in 1824.",
+            "wikipediaID": 30089861
+        },
+        {
+            "name": "Lee-Fendall House",
+            "address": "614 Oronoco St, Alexandria, VA 22314",
+            "location": {
+                "lat": 38.809437,
+                "lng": -77.045725
+            },
+            "description": "The Lee-Fendall House is a historic house museum and garden located in Old Town Alexandria, Virginia. Since its construction in 1785 the house has served as home to thirty-seven members of the Lee family (1785–1903), hundreds of convalescing Union soldiers (1863–1865), the prominent Downham family (1903–1937), and powerful labor leader John L. Lewis (1937–1969).",
+            "wikipediaID": 9032278
+        },
+        {
+            "name": "Lloyd House",
+            "address": "220 N Washington St, Alexandria, VA 22314",
+            "location": {
+                "lat": 38.807214,
+                "lng": -77.046751
+            },
+            "description": "Constructed around 1796-1797, Lloyd House is one of the best examples of Alexandria’s late eighteenth-century Georgian style, and one of five buildings of the Georgian style remaining in the city. Lloyd House is particularly important to the streetscape of Washington Street, part of the George Washington Memorial Parkway.",
+            "wikipediaID": 26657462
+        },
+        {
+            "name": "Christ Church",
+            "address": "118 North Washington St, Alexandria, Virginia 22314",
+            "location": {
+                "lat": 38.806271,
+                "lng": -77.047460
+            },
+            "description": "This beautiful English country-style church was built between 1767-1773 and was attended by George Washington & Robert E. Lee. Tours available Mon.-Sat. 9 a.m.-4 p.m.; Sun. 2-4 p.m., with Sun. morning and evening worship services.",
+            "wikipediaID": 7769126
+        },
+        {
+            "name": "Friendship Firehouse",
+            "address": "107 S Alfred St, Alexandria, VA 22314",
+            "location": {
+                "lat": 38.804955,
+                "lng": -77.049491
+            },
+            "description": "Established in 1774, the Friendship Fire Company was the first volunteer fire company in Alexandria. The current firehouse was built in 1855 and now houses historic firefighting equipment and exhibits. Sat. and Sun. 1-4 p.m.",
+            "wikipediaID": null
+        },
+        {
+            "name": "Lyceum",
+            "address": "201 S Washington St, Alexandria, VA 22314",
+            "location": {
+                "lat": 38.803759,
+                "lng": -77.047537
+            },
+            "description": "The 1839 Greek Revival building serves as the City's history museum. An ongoing exhibition tells the story of Alexandria, once one of the busiest ports in America. Archaeological finds, old photographs, maps, original art works and a wide variety of historic artifacts provide the visitor with a picture of the City's past. Changing exhibitions explore special themes, people, places or events within Alexandria's history. Mon.-Sat. 10 a.m.-5 p.m., Sun. 1-5 p.m.",
+            "wikipediaID": 23047751
+        },
+        {
+            "name": "Appomattox Statue",
+            "address": "201 S Washington St, Alexandria, VA 22314",
+            "location": {
+                "lat": 38.803911,
+                "lng": -77.047210
+            },
+            "description": "Appomattox is a bronze statue created by sculptor M. Caspar Buberl and commissioned and erected by the Robert E. Lee camp of the United Confederate Veterans in 1889. The form of the soldier was designed by John Adams Elder and shows a lone Confederate viewing the aftermath of the battle of Appomattox Court House, where Gen. Robert E. Lee ultimately surrendered to Union general Ulysses S. Grant. The soldier is facing south, the direction which the soldiers from Alexandria would have marched to meet their Union foes in battle in 1861, and also the direction of the former CSA.",
+            "wikipediaID": 27208344
+        },
+        {
+            "name": "City Hall and Market Square",
+            "address": "301 King St, Alexandria, VA 22314",
+            "location": {
+                "lat": 38.805406,
+                "lng": -77.042894
+            },
+            "description": "The Alexandria City Hall also known as the Alexandria Market House & City Hall, in Alexandria, Virginia, is a building built in 1871 and designed by Adolph Cluss. It was listed on the U.S. National Register of Historic Places in 1984. The original city hall was something of a complex, containing the Masonic Lodge, court facility, and both the principal police and fire stations of Alexandria. Market stalls were once situated on the first floors of the west and north wings and in the courtyard which are absent today. A new building was constructed in 1817 but after an extensive fire in 1871 it was rebuilt as a replica of the former building.",
+            "wikipediaID": 23888997
+        },
+        {
+            "name": "Stabler-Leadbeater Apothecary",
+            "address": "107 S Fairfax St, Alexandria, VA 22314",
+            "location": {
+                "lat": 38.804238,
+                "lng": -77.042773
+            },
+            "description": "The Stabler-Leadbeater Apothecary Museum was a family business founded in 1792 and operated in this location from 1805 until 1933.  It represents one of Alexandria's oldest continuously run businesses that combined retailing, wholesaling, and manufacturing. The museum boasts a vast collection of herbal botanicals, handblown glass, and medical equipment.  It also has a spectacular collection of archival materials, including journals, letters and diaries, prescription and formula books, ledgers, orders and invoices. The names of famous customers appear in these documents, including Martha Washington, Nelly Custis and Robert E. Lee.",
+            "wikipediaID": 16173672
+        },
+        {
+            "name": "Old Presbyterian Meeting House",
+            "address": "323 S Fairfax St, Alexandria, VA 22314",
+            "location": {
+                "lat": 38.801352,
+                "lng": -77.043419
+            },
+            "description": "Erected in 1775, the Old Presbyterian Meeting House was the place of worship of the Scottish merchants that founded Alexandria. The Burial Ground adjoining the Church is the final resting place of many patriots of the Revolutionary War, including the Tomb of an Unknown Soldier of the American Revolution, John Carlyle, founder and first overseer of Alexandria; Dr. James Craik, Physician General of the Continental Army and close friend of George Washington, and William Hunter, Jr., mayor of Alexandria and founder of the St. Andrew's Society.",
+            "wikipediaID": 23439578
+        },
+        {
+            "name": "Gentry Row",
+            "address": "212 Prince St, Alexandria, VA 22314",
+            "location": {
+                "lat": 38.803181,
+                "lng": -77.042304
+            },
+            "description": "Gentry Row has many historic home that were once owned by prominent figures as William Fairfax, one of Alexandria's founding trustees, and Dr. James Craik, surgeon-general during the American Revolution as well as George Washington's personal physician.",
+            "wikipediaID": null
+        },
+        {
+            "name": "Athenaeum",
+            "address": "201 Prince St, Alexandria, VA 22314",
+            "location": {
+                "lat": 38.803438,
+                "lng": -77.041821
+            },
+            "description": "A Greek Revival building built in 1851, it was home to the Bank of the Old Dominion, where Robert E. Lee did his banking. During the Civil War occupation of Alexandria, Federal troops commandeered the building, which they used as Commissary Headquarters for the Union Army. After the Battle of Bull Run/First Manassas, the building served as a triage facility for wounded Union soldiers. One of the few remaining examples of neo-classical Greek revival architecture in historic Alexandria, the Athenaeum is on both the Virginia Trust and National Register of Historic Places. Today it is an art gallery and home of the Northern Virginia Fine Arts Association. Open  Thurs.-Sun. noon-4 p.m. Closed major holidays.",
+            "wikipediaID": 32040345
+        },
+        {
+            "name": "Captain's Row",
+            "address": "115 Prince St, Alexandria, VA 22314",
+            "location": {
+                "lat": 38.803433,
+                "lng": -77.041098
+            },
+            "description": "Captain’s Row is a line of homes once heavily inhabited by sea captains in the days when Alexandria was a major commercial port and clipper ships and brigs lined the Potomac waterfront. The homes were mostly rebuilt in 1827 after a fire. The street retains the historic Revolutionary War cobblestone streets that once lined much of Old Town. Local folklore says the cobblestones were brought from England in ships as ballast and were laid by captured Hessians, the German mercenaries hired to fight for the British during the Revolutionary War.",
+            "wikipediaID": null
+        },
+        {
+            "name": "Black History Museum",
+            "address": "115 Prince St, Alexandria, VA 22314",
+            "location": {
+                "lat": 38.812054,
+                "lng": -77.048045
+            },
+            "description": "Originally the segregated library for Alexandria's African American residents, the museum documents the local and national history, culture and contributions of Black America. Tues.-Sat. 10 a.m.-4 p.m. The Museum's permanent exhibition, Securing the Blessings of Liberty, seeks to document how the area African Americans survived slavery, helped to destroy it and eventually helped shape the community that we know today.",
+            "wikipediaID": null
+        },
+        {
+            "name": "Torpedo Factory",
+            "address": "105 N Union St, Alexandria, VA 22314",
+            "location": {
+                "lat": 38.804892,
+                "lng": -77.039802
+            },
+            "description": "The Torpedo Factory Art Center was once a torpedo factory!<br>The U.S. Naval Torpedo Station opened in 1919 and operated for five years before becoming munitions storage. With the onset of WWII, it produced Mark III and Mark IV torpedoes. By the war's end, it was converted to government storage until the City of Alexandria bought it in 1969. In 1974, a group of visionary artists proposed to renovate part of the neglected factory into usable studio spaces. One of the country's earliest examples of creative reuse of industrial space, the Torpedo Factory Art Center became a catalyst for the revitalization of the Potomac riverfront and the historic preservation of Old Town Alexandria as a thriving visitor destination. Today, it continues to be a prototype for other visual arts organizations around the world.",
+            "wikipediaID": 21469711
+        }
+    ]
+}
