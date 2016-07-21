@@ -49,7 +49,7 @@
                     /></li>
                 <!--Append data model to the sidebar-->
                 <span data-bind="foreach: filteredSites">
-                    <li class="site" data-bind="click: $root.selectSite, event: { mouseover: $root.highlightMarkerOfSite, mouseout: $root.unhighlightMarkerOfSite }">
+                    <li class="site" data-bind="click: selectSite, event: { mouseover: highlightMarkerOfSite, mouseout: unhighlightMarkerOfSite }">
                         <a data-bind="text: name"></a>
                     </li>
                 </span>
