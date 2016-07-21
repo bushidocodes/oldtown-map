@@ -24,6 +24,9 @@ var bower = require('gulp-bower');
 // var source = require('vinyl-source-stream');
 var gutil = require('gulp-util');
 // var browserify = require('browserify');
+var html5Lint = require('gulp-html5-lint');
+var csslint = require('gulp-csslint');
+var jshint = require('gulp-jshint');
 
 // Define directory structure of project
 var htmlSrc = './src/*.html';
@@ -41,14 +44,6 @@ gulp.task('html', function () {
         .pipe(minifyHTML())
         .pipe(gulp.dest(buildDir));
 });
-
-
-
-// gulp.task('default', () => {
-//     return gulp.src('src/app.js')
-
-//         .pipe(gulp.dest('dist'));
-// });
 
 // Strip debugging, Transpile via Babel, concat, and minify
 gulp.task('js', function () {
@@ -84,7 +79,31 @@ gulp.task('bower', function () {
         directory: './dist/bower_components',
         // cwd: './dist'
     })
-    .pipe(gulp.dest(buildDir + '/bower_components'));
+        .pipe(gulp.dest(buildDir + '/bower_components'));
 });
 
-gulp.task('default', ['html','css','js','images','bower']);
+gulp.task('html5-lint', function () {
+    return gulp.src(htmlSrc)
+        .pipe(html5Lint()).on('error', function (err, results) {
+            console.log(err.message);
+        });
+});
+
+gulp.task('css-lint', function () {
+    // gulp.src(buildDir + '/css/*.css')
+    gulp.src(cssSrc)
+        .pipe(csslint())
+        .pipe(csslint.reporter());
+});
+
+
+gulp.task('js-hint', function () {
+    // return gulp.src(buildDir + '/js/*.js')
+        return gulp.src(jsSrc)
+        .pipe(jshint({ esversion: 6 }))
+        .pipe(jshint.reporter('jshint-stylish'));
+});
+
+gulp.task('lint', ['html5-lint', 'css-lint', 'js-hint']);
+
+gulp.task('default', ['html', 'css', 'js', 'images', 'bower']);
