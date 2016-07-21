@@ -19,6 +19,8 @@ npm install
 gulp
 ```
 
+...and then open ./dist/index.html in your browser of choice
+
 ## Built with love using
 * Visual Studio Code
 * Babel
