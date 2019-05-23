@@ -13,7 +13,7 @@ The Simpler-Sidebar Bootstrap theme is provided in this repo.
 
 To install, execute the following:
 ```
-git clone https://github.com/spmcbride1201/oldtown-map.git
+git clone https://github.com/bushidocodes/oldtown-map.git
 cd oldtown-map
 npm install
 gulp
@@ -27,7 +27,7 @@ gulp
 * Gulp
 
 ## Authors
-* Sean McBride - [spmcbride1201](https://github.com/spmcbride1201)
+* Sean McBride - [bushidocodes](https://github.com/bushidocodes)
 
 ## License
 
