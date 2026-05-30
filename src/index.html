@@ -47,9 +47,11 @@
                 <!--Append search element to the sidebar-->
                 <li><input type="text" class="form-control" data-bind="textInput: searchString, updateMarkers" placeholder="Search"
                     /></li>
+                <li><button class="btn btn-xs favorites-btn" data-bind="click: toggleShowFavorites, css: {'btn-warning': showFavoritesOnly, 'btn-default': !showFavoritesOnly()}">&#9733; Favorites</button></li>
                 <!--Append data model to the sidebar-->
                 <span data-bind="foreach: filteredSites">
                     <li class="site" data-bind="click: $root.selectSite, event: { mouseover: $root.highlightMarkerOfSite, mouseout: $root.unhighlightMarkerOfSite }">
+                        <span class="favorite-star" data-bind="click: function(data, event) { $root.toggleFavorite(data); event.stopPropagation(); }, css: {'is-favorite': isFavorite}" title="Toggle favorite">&#9733;</span>
                         <a data-bind="text: name"></a>
                     </li>
                 </span>
