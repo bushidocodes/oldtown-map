@@ -3,7 +3,7 @@ oldtown-map is a JavaScript application that renders historic locations in Old T
 
 ## Project Setup
 
-oldtown-map uses ES2015 syntax and transpiles to browser-friendly syntax using [Babel](https://babeljs.io/). It uses gulp as the build tool and bower to manage the following external libraries:
+oldtown-map uses ES2015 syntax and transpiles to browser-friendly syntax using [Babel](https://babeljs.io/). It uses [gulp](https://gulpjs.com/) (v5) as the build tool. The following external libraries are vendored under `dist/bower_components` and loaded directly by `dist/index.html`:
 * jQuery
 * Bootstrap
 * Knockout
@@ -11,12 +11,14 @@ oldtown-map uses ES2015 syntax and transpiles to browser-friendly syntax using [
 
 The Simpler-Sidebar Bootstrap theme is provided in this repo.
 
-To install, execute the following:
+Requires Node.js 18 or newer.
+
+To install and build, execute the following:
 ```
 git clone https://github.com/bushidocodes/oldtown-map.git
 cd oldtown-map
 npm install
-gulp
+npm run build
 ```
 
 ...and then open ./dist/index.html in your browser of choice
