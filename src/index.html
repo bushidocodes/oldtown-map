@@ -40,6 +40,8 @@
 
     <div id="wrapper">
 
+        <div class="overlay"></div>
+
         <!-- Sidebar -->
         <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
@@ -60,8 +62,10 @@
 
         <!-- Navbar -->
         <nav class="navbar navbar-inverse">
-            <button type="button" class="btn btn-inverse navbar-btn navbar-left" id="menu-toggle">
-                <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+            <button type="button" class="hamburger is-closed navbar-btn navbar-left" id="menu-toggle" aria-label="Toggle navigation">
+                <span class="hamb-top"></span>
+                <span class="hamb-middle"></span>
+                <span class="hamb-bottom"></span>
             </button>
             <span class="navbar-text h4">Old Town Map</span>
         </nav>
@@ -95,9 +99,26 @@
 
     <!-- Menu Toggle Script -->
     <script>
+    function hamburger_cross() {
+        var trigger = $('#menu-toggle');
+        if (trigger.hasClass('is-closed')) {
+            trigger.removeClass('is-closed').addClass('is-open');
+            $('.overlay').show();
+        } else {
+            trigger.removeClass('is-open').addClass('is-closed');
+            $('.overlay').hide();
+        }
+    }
+
     $("#menu-toggle").click(function(e) {
         e.preventDefault();
+        hamburger_cross();
         $("#wrapper").toggleClass("toggled");
+    });
+
+    $('.overlay').click(function() {
+        hamburger_cross();
+        $("#wrapper").removeClass("toggled");
     });
     </script>
 
