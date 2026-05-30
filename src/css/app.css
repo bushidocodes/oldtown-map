@@ -17,6 +17,23 @@ h1 {
     cursor: pointer;
 }
 
+.favorite-star {
+    cursor: pointer;
+    color: #ccc;
+    margin-right: 4px;
+    font-size: 14px;
+}
+
+.favorite-star.is-favorite {
+    color: #ffd700;
+}
+
+.favorites-btn {
+    margin-left: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
 /*Override Simple Sidebar Styles*/
 
 .form-control {
