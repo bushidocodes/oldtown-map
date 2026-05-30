@@ -53,6 +53,6 @@ node_modules
 ##########################
 .env
 
-# Built output with injected secrets #
-########################################
-dist/index.html
+# Built output #
+################
+dist/
