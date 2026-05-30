@@ -48,3 +48,11 @@ jsconfig.json
 # Node Modules #
 ################
 node_modules
+
+# Environment / secrets #
+##########################
+.env
+
+# Built output with injected secrets #
+########################################
+dist/index.html
