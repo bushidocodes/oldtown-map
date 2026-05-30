@@ -24,6 +24,8 @@ var Site = /*#__PURE__*/_createClass(function Site(name, address, lat, lng, desc
   this.lng = lng;
   this.description = description;
   this.wikipediaID = wikipediaID;
+  var favorites = JSON.parse(localStorage.getItem('oldtown-favorites') || '[]');
+  this.isFavorite = ko.observable(favorites.indexOf(name) >= 0);
 }); // Declare Google Maps UI elements
 // infoWindow is a single global object in order to ensure that only one infoWindow is rendered at a time
 // wasWarned is a boolean to make sure that the end user is only warned once about Wikipedia errors
@@ -34,6 +36,7 @@ var infoWindow = null;
 var markers = ko.observableArray();
 var defaultIcon;
 var highlightedIcon;
+var favoriteIcon;
 
 // Global variable that stores a boolean to indicate if the end-use has been warned about Wikipedia or not.
 //This is to ensure an end-user is only warned once.
@@ -171,6 +174,7 @@ function initMap() {
   });
   defaultIcon = makeMarkerIcon('ffffff');
   highlightedIcon = makeMarkerIcon('ff661a');
+  favoriteIcon = makeMarkerIcon('ffd700');
 
   /* Iterate through the array of sites, create a marker for each site, add a listener on the marker that bounces the
   marker twice and renders the infowindow for this marker, and add the marker to the markers array. All markers are
@@ -184,8 +188,9 @@ function initMap() {
       },
       map: map,
       title: site.name,
-      icon: defaultIcon
+      icon: site.isFavorite() ? favoriteIcon : defaultIcon
     });
+    marker.site = site;
     marker.addListener('click', function () {
       vm.selectMarker(marker);
     });
@@ -194,7 +199,7 @@ function initMap() {
       this.setIcon(highlightedIcon);
     });
     marker.addListener('mouseout', function () {
-      this.setIcon(defaultIcon);
+      this.setIcon(this.site.isFavorite() ? favoriteIcon : defaultIcon);
     });
     markers.push(marker);
   };
@@ -367,6 +372,7 @@ var ViewModel = function ViewModel() {
 
   // Intially set searchString, which is bound to sidebar search field, to an empty string
   self.searchString = ko.observable('');
+  self.showFavoritesOnly = ko.observable(false);
 
   /*Create a Knockout Observable Array of instances of Site with prepopulated lats and lngs and wikipediaIDs
   Site descriptions are pulled from Frommer's at http://www.frommers.com/destinations/alexandria-va/623095 and
@@ -379,16 +385,16 @@ var ViewModel = function ViewModel() {
   // without regard to case. This filter implementation is based on Ryan Niemeyer's Array Filtering section
   // found at http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
   self.filteredSites = ko.computed(function () {
+    var sites = self.showFavoritesOnly() ? ko.utils.arrayFilter(self.sites(), function (site) {
+      return site.isFavorite();
+    }) : self.sites();
     if (self.searchString() === '') {
-      return self.sites();
-    } else if (self.searchString() !== '') {
-      var filter = self.searchString().toLowerCase();
-      return ko.utils.arrayFilter(self.sites(), function (site) {
-        var siteNoCase = site.name.toLowerCase();
-        //Changed syntax from return siteNoCase.includes(filter); to support IE11
-        if (siteNoCase.indexOf(filter) >= 0) return true;
-      });
+      return sites;
     }
+    var filter = self.searchString().toLowerCase();
+    return ko.utils.arrayFilter(sites, function (site) {
+      return site.name.toLowerCase().indexOf(filter) >= 0;
+    });
   });
 
   // Behaviors
@@ -412,6 +418,28 @@ var ViewModel = function ViewModel() {
     bounce(markerOfSelectedSite[0], 2);
     generateInfoWindow(site, map, markerOfSelectedSite[0], 1400);
   };
+  self.toggleShowFavorites = function () {
+    self.showFavoritesOnly(!self.showFavoritesOnly());
+  };
+  self.toggleFavorite = function (site) {
+    var newValue = !site.isFavorite();
+    site.isFavorite(newValue);
+    var favorites = JSON.parse(localStorage.getItem('oldtown-favorites') || '[]');
+    if (newValue) {
+      if (favorites.indexOf(site.name) < 0) favorites.push(site.name);
+    } else {
+      favorites = favorites.filter(function (n) {
+        return n !== site.name;
+      });
+    }
+    localStorage.setItem('oldtown-favorites', JSON.stringify(favorites));
+    var markerArr = jQuery.grep(markers(), function (marker) {
+      return marker.title === site.name;
+    });
+    if (markerArr.length) {
+      markerArr[0].setIcon(newValue ? favoriteIcon : defaultIcon);
+    }
+  };
 
   // highlightMarkerOfSite() and unhighlightMarkerOfSite() are used to allow the end user to hover over sites in
   // the side bar and see the associated marker of that site highlighted on the map.
@@ -425,7 +453,7 @@ var ViewModel = function ViewModel() {
     var markerOfSelectedSite = jQuery.grep(markers(), function (marker) {
       return marker.title === site.name;
     });
-    markerOfSelectedSite[0].setIcon(defaultIcon);
+    markerOfSelectedSite[0].setIcon(site.isFavorite() ? favoriteIcon : defaultIcon);
   };
 
   // selectMarker() is used to override the default behavior of when a marker is clicked. This ensures uniform
