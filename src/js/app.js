@@ -145,20 +145,36 @@ function clearInfoWindow() {
     }
 }
 
-/* generateInfoWindow() issues API calls to Wikipedia for images, generates a content string and infoWindow, and then
-opens the infoWindow after a delay.  The delay gives the Wikipedia JSONP API functions to complete and append data to
-the contentString before being opened, with helps ensures the infoWindow auto-pans properly*/
+/* generateInfoWindow() issues API calls to Wikipedia for images, builds InfoWindow content using
+DOM APIs (not HTML string concatenation), and opens the infoWindow after a delay. */
 
 function generateInfoWindow(site, map, marker, delay) {
-    if (site.wikipediaID) pullImagesFromWikipedia(site, site.wikipediaID);
-    var contentString = '<strong>' + site.name + '</strong>' + '<p>' + site.description + '</p>';
+    var container = document.createElement('div');
+
+    var nameEl = document.createElement('strong');
+    nameEl.textContent = site.name;
+    container.appendChild(nameEl);
+
+    var descEl = document.createElement('p');
+    descEl.innerHTML = site.description; // hardcoded data, not from external sources
+    container.appendChild(descEl);
+
     if (site.wikipediaID) {
-        contentString += '<strong>Images From <a href="https://en.wikipedia.org/?curid=' + site.wikipediaID +
-            '">Wikipedia Page</a></strong><br>';
+        var imgHeader = document.createElement('strong');
+        imgHeader.appendChild(document.createTextNode('Images From '));
+        var wikiLink = document.createElement('a');
+        wikiLink.href = 'https://en.wikipedia.org/?curid=' + site.wikipediaID;
+        wikiLink.textContent = 'Wikipedia Page';
+        imgHeader.appendChild(wikiLink);
+        container.appendChild(imgHeader);
+        container.appendChild(document.createElement('br'));
+
+        var imagesContainer = document.createElement('div');
+        container.appendChild(imagesContainer);
+        pullImagesFromWikipedia(site, site.wikipediaID, imagesContainer);
     }
-    infoWindow = new google.maps.InfoWindow({
-        content: contentString
-    });
+
+    infoWindow = new google.maps.InfoWindow({ content: container });
     setTimeout(function () { infoWindow.open(map, marker); }, delay);
 }
 
@@ -187,20 +203,15 @@ function makeMarkerIcon(markerColor) {
     };
 }
 
-/*pullImagesFromWikipedia() is a function that issues a JSONP format Ajax request to the Wikipedia Mediawiki API.
-It retrieves all images displayed on the site's Wikipedia page, filters out known junk images based on the name of the
-image, and then calls the helper function resolveWikipediaImageURL for iamges that pass the filter.*/
+/*pullImagesFromWikipedia() issues JSON (not JSONP) requests to the Wikipedia MediaWiki API via CORS.
+It retrieves images from the site's Wikipedia page, filters out known junk images, and then calls
+resolveWikipediaImageURL for images that pass the filter.*/
 
-// TODO: Investigate Why does this function need to take a seperate wikipediaID if wikipediaID is an attribute of Site?
-
-function pullImagesFromWikipedia(site, wikipediaID) {
+function pullImagesFromWikipedia(site, wikipediaID, imagesContainer) {
     var wikipediaEndpoint = 'https://en.wikipedia.org/w/api.php';
-    // Start a timeout that triggers a wikipedia warning alert if eight seconds elapse without a successful response.
-    // This checks wasWarnedAboutWikipedia to make sure that the alert only occurs once
     var wikiRequestTimeout;
     if (!wasWarnedAboutWikipedia()) {
         wikiRequestTimeout = setTimeout(function () {
-
             wasWarnedAboutWikipedia(true);
         }, 3000);
     }
@@ -211,22 +222,15 @@ function pullImagesFromWikipedia(site, wikipediaID) {
             action: 'query',
             pageids: wikipediaID,
             prop: 'images',
-            format: 'json'
+            format: 'json',
+            origin: '*'
         },
-        dataType: 'jsonp',
+        dataType: 'json',
         success: (function (data) {
             clearTimeout(wikiRequestTimeout);
-            var imageNames = [];
-            var imageURLs = [];
             for (var i = 0; i < data.query.pages[wikipediaID].images.length; i++) {
                 let imageName = data.query.pages[wikipediaID].images[i].title;
                 let process = true;
-                /*The following statements prevent rendering of common junk images returned by Wikipedia
-                The syntax
-                      if (imageName.includes('map')) process = false;
-                Was replaced by
-                      if (imageName.indexOf('map') >= 0) process = false;
-                Specifically to support IE11. **shakes fist at IE continuously until January 2023 EOL date** */
                 if (imageName.indexOf('map') >= 0) process = false;
                 if (imageName.indexOf('Map') >= 0) process = false;
                 if (imageName.indexOf('logo') >= 0) process = false;
@@ -238,14 +242,14 @@ function pullImagesFromWikipedia(site, wikipediaID) {
                 if (imageName.indexOf('Ambox') >= 0) process = false;
                 if (imageName.indexOf('Nuvola') >= 0) process = false;
                 if (imageName.indexOf('btn') >= 0) process = false;
-                if (process) resolveWikipediaImageURL(site, imageName);
+                if (process) resolveWikipediaImageURL(imageName, imagesContainer);
             }
         })
     });
 
-    /* resolveWikipediaImageURL is a helper function that issues a second Ajax request in JSONP format to retrieve the
-    image URL, formats an <img> tag with style information, and then appends the tag to the current infoWindow.*/
-    function resolveWikipediaImageURL(site, imageName) {
+    /* resolveWikipediaImageURL retrieves the image URL via JSON/CORS, validates it is an HTTPS
+    Wikimedia URL, then builds the <a>/<img> elements via DOM APIs and appends to imagesContainer. */
+    function resolveWikipediaImageURL(imageName, imagesContainer) {
         $.ajax({
             url: wikipediaEndpoint,
             cache: true,
@@ -254,15 +258,29 @@ function pullImagesFromWikipedia(site, wikipediaID) {
                 prop: 'imageinfo',
                 iiprop: 'url',
                 titles: imageName,
-                format: 'json'
+                format: 'json',
+                origin: '*'
             },
-            dataType: 'jsonp',
+            dataType: 'json',
             success: (function (data) {
-                var imageHTML = '<a href="' + data.query.pages[Object.keys(data.query.pages)].imageinfo[0].url + '">' +
-                    '<img class="wiki-img img-circle" src="' +
-                    data.query.pages[Object.keys(data.query.pages)].imageinfo[0].url + '" height="20%" width="20%">' +
-                    '</a>';
-                infoWindow.setContent(infoWindow.content + imageHTML);
+                var pageId = Object.keys(data.query.pages)[0];
+                var imageUrl = data.query.pages[pageId].imageinfo[0].url;
+                try {
+                    var parsed = new URL(imageUrl);
+                    if (parsed.protocol !== 'https:') return;
+                    if (!parsed.hostname.endsWith('.wikimedia.org') && !parsed.hostname.endsWith('.wikipedia.org')) return;
+                } catch (e) {
+                    return;
+                }
+                var anchor = document.createElement('a');
+                anchor.href = imageUrl;
+                var img = document.createElement('img');
+                img.className = 'wiki-img img-circle';
+                img.src = imageUrl;
+                img.style.height = '20%';
+                img.style.width = '20%';
+                anchor.appendChild(img);
+                imagesContainer.appendChild(anchor);
             })
         });
     }
