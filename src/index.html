@@ -16,7 +16,7 @@
     <!--View http://blog.teamtreehouse.com/optimizing-mobile-web-apps-ios to understand these tags-->
     <!--Content based on tfausak's iOS8 web app shell located at https://gist.github.com/tfausak/2222823 -->
 
-    <!--Allow iOS to render as a Web App (outside of Safari)-->
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <!-- Make the app title different than the page title. -->
@@ -27,6 +27,7 @@
 
     <!--iOS icons-->
     <!--Optimized for iOS9 based on sizes at https://makeappicon.com/ios9icon-->
+    <link rel="icon" href="images/apple-touch-icon-120x120.png">
     <link rel="apple-touch-icon" href="images/apple-touch-icon-120x120.png">
     <link rel="apple-touch-icon" sizes="152x152" href="images/apple-touch-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="120x120" href="images/apple-touch-icon-120x120.png">
@@ -90,7 +91,7 @@
     <script src="https://cdn.jsdelivr.net/npm/knockstrap@1.3.2/build/knockstrap.min.js"></script>
     <script src="js/scripts.js"></script>
 
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=%%MAPS_API_KEY%%&callback=initMap" onerror="googleMapsError()"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=%%MAPS_API_KEY%%&callback=initMap&loading=async" onerror="googleMapsError()"></script>
 
     <!-- Menu Toggle Script -->
     <script>
