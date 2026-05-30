@@ -102,6 +102,104 @@
     background: none;
 }
 
+/* Hamburger button */
+
+.hamburger {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: block;
+    height: 32px;
+    padding: 0;
+    position: relative;
+    width: 32px;
+}
+
+.hamburger:hover,
+.hamburger:focus,
+.hamburger:active {
+    outline: none;
+}
+
+.hamb-top,
+.hamb-middle,
+.hamb-bottom {
+    background-color: rgba(255,255,255,0.7);
+    border-radius: 2px;
+    height: 3px;
+    left: 0;
+    position: absolute;
+    width: 100%;
+    -webkit-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
+}
+
+.hamburger.is-closed .hamb-top    { top: 6px; }
+.hamburger.is-closed .hamb-middle { top: 14px; }
+.hamburger.is-closed .hamb-bottom { top: 22px; }
+
+.hamburger.is-open .hamb-top {
+    background-color: #fff;
+    top: 14px;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.hamburger.is-open .hamb-middle {
+    opacity: 0;
+}
+
+.hamburger.is-open .hamb-bottom {
+    background-color: #fff;
+    top: 14px;
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+/* Dark overlay */
+
+.overlay {
+    background-color: rgba(0,0,0,0.4);
+    bottom: 0;
+    display: none;
+    height: calc(100% - 52px);
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 52px;
+    width: 100%;
+    z-index: 500;
+}
+
+/* Sidebar nav item hover sweep animation */
+
+.sidebar-nav li.site {
+    position: relative;
+}
+
+.sidebar-nav li.site::before {
+    background-color: rgba(255,255,255,0.15);
+    content: '';
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    -webkit-transition: width .2s ease-in;
+    transition: width .2s ease-in;
+    width: 3px;
+    z-index: 0;
+}
+
+.sidebar-nav li.site:hover::before {
+    width: 100%;
+}
+
+.sidebar-nav li.site a,
+.sidebar-nav li.site .favorite-star {
+    position: relative;
+    z-index: 1;
+}
+
 /*Commented out media wiki to ensure that sidebar is closed when app opens and map div loads as the correct width*/
 /*@media(min-width:768px) {
     #wrapper {
