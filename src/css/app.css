@@ -142,3 +142,15 @@ h1 {
 .btn-inverse.active {
     color: rgba(255, 255, 255, 0.75);
 }
+
+/* CSS bounce animation for AdvancedMarkerElement (replaces google.maps.Animation.BOUNCE) */
+/* 4 iterations × 350ms = 1400ms, matching the original 700ms × 2 bounces */
+
+@keyframes marker-bounce {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-20px); }
+}
+
+.marker-bouncing {
+    animation: marker-bounce 0.35s ease-in-out 4;
+}

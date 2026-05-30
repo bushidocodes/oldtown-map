@@ -24,16 +24,9 @@ class Site {
 
 // Declare Google Maps UI elements
 // infoWindow is a single global object in order to ensure that only one infoWindow is rendered at a time
-// wasWarned is a boolean to make sure that the end user is only warned once about Wikipedia errors
-// defaultIcon is a dynamically generated (during initMap()) custom icon that is used for markers
-// highlightenIcon is a dynamically generated (during initMap()) custom icon that is used for markers when they are
-// hovered over (via the marker itself or via the sidebar)
 
 var infoWindow = null;
 var markers = ko.observableArray();
-var defaultIcon;
-var highlightedIcon;
-var favoriteIcon;
 
 // Global variable that stores a boolean to indicate if the end-use has been warned about Wikipedia or not.
 //This is to ensure an end-user is only warned once.
@@ -41,102 +34,55 @@ var favoriteIcon;
 var wasWarnedAboutWikipedia = ko.observable(false);
 var wasWarnedAboutMaps = ko.observable(false);
 
-// Custom Google Maps Style
+// Pin color configurations for AdvancedMarkerElement / PinElement
 
-var styles =
-    [
-        {
-            "featureType": "all", "elementType": "labels.text.fill",
-            "stylers": [{ "saturation": 36 }, { "color": "#000000" }, { "lightness": 40 }]
-        },
-        {
-            "featureType": "all", "elementType": "labels.text.stroke",
-            "stylers": [{ "visibility": "on" }, { "color": "#000000" }, { "lightness": 16 }]
-        },
-        {
-            "featureType": "all", "elementType": "labels.icon",
-            "stylers": [{ "visibility": "off" }]
-        },
-        {
-            "featureType": "administrative", "elementType": "geometry.fill",
-            "stylers": [{ "color": "#000000" }, { "lightness": 20 }]
-        },
-        {
-            "featureType": "administrative", "elementType": "geometry.stroke",
-            "stylers": [{ "color": "#000000" }, { "lightness": 17 }, { "weight": 1.2 }]
-        },
-        {
-            "featureType": "landscape", "elementType": "geometry",
-            "stylers": [{ "color": "#000000" }, { "lightness": 20 }]
-        },
-        {
-            "featureType": "poi", "elementType": "geometry",
-            "stylers": [{ "color": "#000000" }, { "lightness": 21 }]
-        },
-        {
-            "featureType": "road.highway", "elementType": "geometry.fill",
-            "stylers": [{ "color": "#000000" }, { "lightness": 17 }]
-        },
-        {
-            "featureType": "road.highway", "elementType": "geometry.stroke",
-            "stylers": [{ "color": "#000000" }, { "lightness": 29 }, { "weight": 0.2 }]
-        },
-        {
-            "featureType": "road.arterial", "elementType": "geometry",
-            "stylers": [{ "color": "#000000" }, { "lightness": 18 }]
-        },
-        {
-            "featureType": "road.local", "elementType": "geometry",
-            "stylers": [{ "color": "#000000" }, { "lightness": 16 }]
-        },
-        {
-            "featureType": "transit", "elementType": "geometry",
-            "stylers": [{ "color": "#000000" }, { "lightness": 19 }]
-        },
-        {
-            "featureType": "water", "elementType": "geometry",
-            "stylers": [{ "color": "#000000" }, { "lightness": 17 }]
-        }
-    ];
+var PIN_DEFAULT    = { background: '#ffffff', borderColor: '#333333', glyphColor: '#333333' };
+var PIN_HIGHLIGHTED = { background: '#ff661a', borderColor: '#333333', glyphColor: '#ffffff' };
+var PIN_FAVORITE   = { background: '#ffd700', borderColor: '#333333', glyphColor: '#333333' };
+
+// makePinElement() returns a DOM element suitable for use as AdvancedMarkerElement.content
+// Must be called after the Maps SDK (including the marker library) is loaded.
+
+function makePinElement(pinOptions) {
+    return new google.maps.marker.PinElement(pinOptions).element;
+}
 
 // initMap() is the main function for creating the Google Map
-// It generates the Google Map, generates the custom icons, generates an array of markers with listeners.
+// It generates the Google Map and generates an array of AdvancedMarkerElements with listeners.
 
 function initMap() {
-    // Declare and instatiate Google Map object using desired view zoom, custom styling and map type
+    // Declare and instatiate Google Map object using desired view zoom and map type.
+    // mapId is required by AdvancedMarkerElement; cloud-based styling is applied via the Map ID.
     self.map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 38.806, lng: -77.045 },
         zoom: 16,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
-        styles: styles
+        mapId: '%%MAPS_ID%%'
     });
 
-    defaultIcon = makeMarkerIcon('ffffff');
-    highlightedIcon = makeMarkerIcon('ff661a');
-    favoriteIcon = makeMarkerIcon('ffd700');
-
-    /* Iterate through the array of sites, create a marker for each site, add a listener on the marker that bounces the
-    marker twice and renders the infowindow for this marker, and add the marker to the markers array. All markers are
-    diplayed on the map upon initial load*/
+    /* Iterate through the array of sites, create an AdvancedMarkerElement for each site, add a
+    listener on the marker that bounces the marker twice and renders the infowindow for this
+    marker, and add the marker to the markers array. All markers are displayed on the map upon
+    initial load. */
 
     for (var i = 0; i < vm.sites().length; i++) {
         let site = vm.sites()[i];
-        let marker = new google.maps.Marker({
+        let marker = new google.maps.marker.AdvancedMarkerElement({
             position: { lat: site.lat, lng: site.lng },
             map: map,
             title: site.name,
-            icon: site.isFavorite() ? favoriteIcon : defaultIcon
+            content: makePinElement(site.isFavorite() ? PIN_FAVORITE : PIN_DEFAULT)
         });
         marker.site = site;
         marker.addListener('click', function () {
             vm.selectMarker(marker);
         });
-        //Event Listeners for mouseover and mouseout that modify the marker colors upon hover
+        // Event Listeners for mouseover and mouseout that modify the marker colors upon hover
         marker.addListener('mouseover', function () {
-            this.setIcon(highlightedIcon);
+            marker.content = makePinElement(PIN_HIGHLIGHTED);
         });
         marker.addListener('mouseout', function () {
-            this.setIcon(this.site.isFavorite() ? favoriteIcon : defaultIcon);
+            marker.content = makePinElement(marker.site.isFavorite() ? PIN_FAVORITE : PIN_DEFAULT);
         });
         markers.push(marker);
     }
@@ -181,32 +127,19 @@ function generateInfoWindow(site, map, marker, delay) {
     }
 
     infoWindow = new google.maps.InfoWindow({ headerContent: nameEl, content: container });
-    setTimeout(function () { infoWindow.open(map, marker); }, delay);
+    setTimeout(function () { infoWindow.open({ anchor: marker, map: map }); }, delay);
 }
 
-// bounce() helper function bounced a marker a set number of times
+// bounce() bounces a marker a set number of times using a CSS keyframe animation
 
 function bounce(marker, numberOfBounces) {
-    if (marker.getAnimation() !== null) {
-        marker.setAnimation(null);
-    }
-    // The BOUNCE animation lasts 700ms, so calculate duration and then use setTimeout()
-    marker.setAnimation(google.maps.Animation.BOUNCE);
-    setTimeout(function () { marker.setAnimation(null); }, 700 * numberOfBounces);
-}
-
-/*makeMarkerIcon(markerColor) takes in a color in hexidecimal notation and creates a new marker icon of that color.
-This function was presented in the Google Maps Udacity course, but I have updated it for version 3.11 of the maps API*/
-
-function makeMarkerIcon(markerColor) {
-    return {
-        path: google.maps.SymbolPath.CIRCLE,
-        fillColor: '#' + markerColor,
-        fillOpacity: 1,
-        strokeColor: '#333333',
-        strokeWeight: 1.5,
-        scale: 9
-    };
+    var el = marker.content;
+    if (!el) return;
+    el.classList.remove('marker-bouncing');
+    // Force reflow so the animation restarts if already running
+    void el.offsetWidth;
+    el.classList.add('marker-bouncing');
+    setTimeout(function () { el.classList.remove('marker-bouncing'); }, 700 * numberOfBounces);
 }
 
 /*pullImagesFromWikipedia() issues JSON (not JSONP) requests to the Wikipedia MediaWiki API via CORS.
@@ -300,7 +233,7 @@ function googleMapsError() {
 
 /*updateMarkers() is a custom Knockout binding handler that performs real time processing on the menu search field
 It clears the infoWindow if open and then iterates through the markers array.
-If a marker is in the filderedSites array, meaning that it meets the search criteria provided by the user,
+If a marker is in the filteredSites array, meaning that it meets the search criteria provided by the user,
 attach the marker to the map. Otherwise, detach the marker from the map.*/
 
 ko.bindingHandlers.updateMarkers = {
@@ -315,7 +248,7 @@ ko.bindingHandlers.updateMarkers = {
                     markerInFilteredSites = true;
                 }
             }
-            markerInFilteredSites ? marker.setMap(map) : marker.setMap(null);
+            marker.map = markerInFilteredSites ? map : null;
         }
     }
 };
@@ -341,7 +274,7 @@ var ViewModel = function () {
             "221 King St, Alexandria, VA 22314",
             38.804628,
             -77.042357,
-            "Alexandria’s Visitor's Center was originally the home of William Ramsay, one of the three original " +
+            "Alexandria's Visitor's Center was originally the home of William Ramsay, one of the three original " +
             "Scottish settlers that settled the area in November 1748 and petitioned the House of Burgesses to " +
             "establish a town.",
             null
@@ -366,11 +299,11 @@ var ViewModel = function () {
             "134 N Royal St, Alexandria, VA 22314",
             38.805554,
             -77.043619,
-            "Discover Alexandria’s five-star hotel of the 18th century! The Museum consists of the c. 1785 tavern " +
+            "Discover Alexandria's five-star hotel of the 18th century! The Museum consists of the c. 1785 tavern " +
             "and the 1792 City Tavern and Hotel. Both were constructed by John Wise but made famous by " +
             "tavernkeeper John Gadsby. His establishment was the center of political, business, and social " +
-            "life in Alexandria and in the new federal city of Washington, D.C. The City Tavern’s Ballroom was " +
-            "the location of George Washington’s Birthnight Ball in 1798 and 1799, as well as Thomas Jefferson’s " +
+            "life in Alexandria and in the new federal city of Washington, D.C. The City Tavern's Ballroom was " +
+            "the location of George Washington's Birthnight Ball in 1798 and 1799, as well as Thomas Jefferson's " +
             "Inaugural Banquet in 1801. The museum offers tours, programs and special events. " +
             "Apr.-Oct.: Sun. & Mon. 1-5 p.m., Tues.-Sat. 10 a.m.-5 p.m.; " +
             "Nov.-March.: Wed.-Sat. 11 a.m.-4 p.m., Sun. 1-4 p.m",
@@ -403,7 +336,7 @@ var ViewModel = function () {
             -77.045208,
             "Robert E. Lee left this home that he loved so well to enter West Point. After Appomattox he returned " +
             "and climbed the wall to see if the snowballs were in bloom. George Washington dined here when it was " +
-            "the home of William Fitzhugh, Lee’s kinsman and his wife’s grandfather. Lafayette visited here in 1824.",
+            "the home of William Fitzhugh, Lee's kinsman and his wife's grandfather. Lafayette visited here in 1824.",
             30089861
         ),
         new Site(
@@ -422,7 +355,7 @@ var ViewModel = function () {
             "220 N Washington St, Alexandria, VA 22314",
             38.807214,
             -77.046751,
-            "Constructed around 1796-1797, Lloyd House is one of the best examples of Alexandria’s late " +
+            "Constructed around 1796-1797, Lloyd House is one of the best examples of Alexandria's late " +
             "eighteenth-century Georgian style, and one of five buildings of the Georgian style remaining in the " +
             "city. Lloyd House is particularly important to the streetscape of Washington Street, part of the George " +
             "Washington Memorial Parkway.",
@@ -543,7 +476,7 @@ var ViewModel = function () {
             "115 Prince St, Alexandria, VA 22314",
             38.803433,
             -77.041098,
-            "Captain’s Row is a line of homes once heavily inhabited by sea captains in the days when Alexandria " +
+            "Captain's Row is a line of homes once heavily inhabited by sea captains in the days when Alexandria " +
             "was a major commercial port and clipper ships and brigs lined the Potomac waterfront. The homes were " +
             "mostly rebuilt in 1827 after a fire. The street retains the historic Revolutionary War cobblestone " +
             "streets that once lined much of Old Town. Local folklore says the cobblestones were brought from " +
@@ -633,7 +566,7 @@ var ViewModel = function () {
         localStorage.setItem('oldtown-favorites', JSON.stringify(favorites));
         var markerArr = jQuery.grep(markers(), function (marker) { return marker.title === site.name; });
         if (markerArr.length) {
-            markerArr[0].setIcon(newValue ? favoriteIcon : defaultIcon);
+            markerArr[0].content = makePinElement(newValue ? PIN_FAVORITE : PIN_DEFAULT);
         }
     };
 
@@ -643,14 +576,14 @@ var ViewModel = function () {
         var markerOfSelectedSite = jQuery.grep(markers(), function (marker) {
             return (marker.title === site.name);
         });
-        markerOfSelectedSite[0].setIcon(highlightedIcon);
+        markerOfSelectedSite[0].content = makePinElement(PIN_HIGHLIGHTED);
     };
 
     self.unhighlightMarkerOfSite = function (site) {
         var markerOfSelectedSite = jQuery.grep(markers(), function (marker) {
             return (marker.title === site.name);
         });
-        markerOfSelectedSite[0].setIcon(site.isFavorite() ? favoriteIcon : defaultIcon);
+        markerOfSelectedSite[0].content = makePinElement(site.isFavorite() ? PIN_FAVORITE : PIN_DEFAULT);
     };
 
     // selectMarker() is used to override the default behavior of when a marker is clicked. This ensures uniform

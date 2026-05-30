@@ -40,9 +40,10 @@ function html() {
         .pipe(dest(buildDir));
 }
 
-// Transpile ES2015+ via Babel, then concatenate into a single bundle
+// Transpile ES2015+ via Babel, inject secrets, then concatenate into a single bundle
 function js() {
     return src(jsSrc)
+        .pipe(replace('%%MAPS_ID%%', process.env.MAPS_ID || ''))
         .pipe(babel({ presets: ['@babel/preset-env'] }))
         .pipe(concat('scripts.js'))
         .pipe(dest(buildDir + '/js/'));
