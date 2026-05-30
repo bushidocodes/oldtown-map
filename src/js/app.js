@@ -154,11 +154,10 @@ function clearInfoWindow() {
 DOM APIs (not HTML string concatenation), and opens the infoWindow after a delay. */
 
 function generateInfoWindow(site, map, marker, delay) {
-    var container = document.createElement('div');
-
     var nameEl = document.createElement('strong');
     nameEl.textContent = site.name;
-    container.appendChild(nameEl);
+
+    var container = document.createElement('div');
 
     var descEl = document.createElement('p');
     descEl.innerHTML = site.description; // hardcoded data, not from external sources
@@ -179,7 +178,7 @@ function generateInfoWindow(site, map, marker, delay) {
         pullImagesFromWikipedia(site, site.wikipediaID, imagesContainer);
     }
 
-    infoWindow = new google.maps.InfoWindow({ content: container });
+    infoWindow = new google.maps.InfoWindow({ headerContent: nameEl, content: container });
     setTimeout(function () { infoWindow.open(map, marker); }, delay);
 }
 
