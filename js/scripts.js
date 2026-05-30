@@ -237,6 +237,8 @@ function generateInfoWindow(site, map, marker, delay) {
     container.appendChild(imgHeader);
     container.appendChild(document.createElement('br'));
     var imagesContainer = document.createElement('div');
+    imagesContainer.style.maxHeight = '160px';
+    imagesContainer.style.overflowY = 'auto';
     container.appendChild(imagesContainer);
     pullImagesFromWikipedia(site, site.wikipediaID, imagesContainer);
   }
@@ -349,8 +351,8 @@ function pullImagesFromWikipedia(site, wikipediaID, imagesContainer) {
         var img = document.createElement('img');
         img.className = 'wiki-img img-circle';
         img.src = imageUrl;
-        img.style.height = '20%';
-        img.style.width = '20%';
+        img.style.height = '80px';
+        img.style.width = '80px';
         anchor.appendChild(img);
         imagesContainer.appendChild(anchor);
       }
