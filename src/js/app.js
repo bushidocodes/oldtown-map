@@ -177,14 +177,14 @@ function bounce(marker, numberOfBounces) {
 This function was presented in the Google Maps Udacity course, but I have updated it for version 3.11 of the maps API*/
 
 function makeMarkerIcon(markerColor) {
-    var markerIcon = {
-        url: 'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|' + markerColor + '|40|_|%E2%80%A2',
-        size: new google.maps.Size(21, 34), //dimensions of marker icon
-        origin: new google.maps.Point(0, 0), //origin of marker icon
-        anchor: new google.maps.Point(10, 34), //anch
-        scaledSize: new google.maps.Size(21, 34)
+    return {
+        path: google.maps.SymbolPath.CIRCLE,
+        fillColor: '#' + markerColor,
+        fillOpacity: 1,
+        strokeColor: '#333333',
+        strokeWeight: 1.5,
+        scale: 9
     };
-    return markerIcon;
 }
 
 /*pullImagesFromWikipedia() is a function that issues a JSONP format Ajax request to the Wikipedia Mediawiki API.

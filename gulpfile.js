@@ -22,6 +22,8 @@ const concat = require('gulp-concat');
 const htmlmin = require('gulp-html-minifier-terser');
 const cleanCSS = require('gulp-clean-css');
 const babel = require('gulp-babel');
+const replace = require('gulp-replace');
+require('dotenv').config();
 
 // Define the directory structure of the project
 const htmlSrc = './src/*.html';
@@ -30,10 +32,10 @@ const jsSrc = './src/js/*.js';
 const imgSrc = './src/images/*.png';
 const buildDir = './dist';
 
-// Minify new or changed HTML pages
+// Minify new or changed HTML pages, injecting secrets from .env
 function html() {
     return src(htmlSrc)
-        .pipe(changed(buildDir))
+        .pipe(replace('%%MAPS_API_KEY%%', process.env.MAPS_API_KEY || ''))
         .pipe(htmlmin({ collapseWhitespace: true, removeComments: true }))
         .pipe(dest(buildDir));
 }
