@@ -674,3 +674,26 @@ var ViewModel = function () {
 
 var vm = new ViewModel();
 ko.applyBindings(vm);
+
+function hamburger_cross() {
+    var trigger = $('#menu-toggle');
+    if (trigger.hasClass('is-closed')) {
+        trigger.removeClass('is-closed').addClass('is-open');
+        $('.overlay').show();
+    } else {
+        trigger.removeClass('is-open').addClass('is-closed');
+        $('.overlay').hide();
+    }
+    trigger.attr('aria-expanded', trigger.hasClass('is-open'));
+}
+
+$('#menu-toggle').click(function (e) {
+    e.preventDefault();
+    hamburger_cross();
+    $('#wrapper').toggleClass('toggled');
+});
+
+$('.overlay').click(function () {
+    hamburger_cross();
+    $('#wrapper').removeClass('toggled');
+});
