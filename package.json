@@ -25,12 +25,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/spmcbride1201/oldtown-map.git"
+    "url": "git+https://github.com/bushidocodes/oldtown-map.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/spmcbride1201/oldtown-map/issues"
+    "url": "https://github.com/bushidocodes/oldtown-map/issues"
   },
-  "homepage": "https://github.com/spmcbride1201/oldtown-map#readme"
+  "homepage": "https://github.com/bushidocodes/oldtown-map#readme"
 }
