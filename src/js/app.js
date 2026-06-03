@@ -140,6 +140,19 @@ function initMap() {
         });
         markers.push(marker);
     }
+
+    // Reactively sync marker visibility whenever filteredSites changes (covers both
+    // search input and favorites toggle). peek() avoids a dependency on the markers
+    // array itself since all markers are already pushed above.
+    ko.computed(function () {
+        var filtered = vm.filteredSites();
+        var allMarkers = markers.peek();
+        clearInfoWindow();
+        for (var i = 0; i < allMarkers.length; i++) {
+            var visible = filtered.some(function (site) { return site.name === allMarkers[i].title; });
+            allMarkers[i].setMap(visible ? map : null);
+        }
+    });
 }
 
 // clearInfoWindow() gracefully closes the infoWindow if it is open
@@ -304,27 +317,6 @@ function googleMapsError() {
     wasWarnedAboutMaps(true);
 }
 
-/*updateMarkers() is a custom Knockout binding handler that performs real time processing on the menu search field
-It clears the infoWindow if open and then iterates through the markers array.
-If a marker is in the filderedSites array, meaning that it meets the search criteria provided by the user,
-attach the marker to the map. Otherwise, detach the marker from the map.*/
-
-ko.bindingHandlers.updateMarkers = {
-    update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
-        clearInfoWindow();
-        for (var i = 0; i < markers().length; i++) {
-            let marker = markers()[i];
-            let markerInFilteredSites = false;
-            for (var j = 0; j < vm.filteredSites().length; j++) {
-                let site = vm.filteredSites()[j];
-                if (marker.title === site.name) {
-                    markerInFilteredSites = true;
-                }
-            }
-            markerInFilteredSites ? marker.setMap(map) : marker.setMap(null);
-        }
-    }
-};
 
 //Knockout Functionality
 var ViewModel = function () {
@@ -663,7 +655,7 @@ var ViewModel = function () {
     // selectMarker() is used to override the default behavior of when a marker is clicked. This ensures uniform
     // behavior between the sidebar and the map
     self.selectMarker = function (marker) {
-        var siteOfSelectedMarker = jQuery.grep(self.filteredSites(), function (site) {
+        var siteOfSelectedMarker = jQuery.grep(self.sites(), function (site) {
             return (site.name === marker.title);
         });
         clearInfoWindow();
