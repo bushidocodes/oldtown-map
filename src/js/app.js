@@ -612,6 +612,7 @@ var ViewModel = function () {
         clearInfoWindow();
         //Don't close the sidebar automatically if the window is so wide that the infowindow is fully visible on the visible portion of the map div
         if ($(window).width() < 1500) {
+            hamburger_cross();
             $("#wrapper").toggleClass("toggled");
         }
         map.panTo({ lat: site.lat, lng: site.lng });
