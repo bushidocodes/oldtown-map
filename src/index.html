@@ -62,7 +62,7 @@
 
         <!-- Navbar -->
         <nav class="navbar navbar-inverse">
-            <button type="button" class="hamburger is-closed navbar-btn navbar-left" id="menu-toggle" aria-label="Toggle navigation">
+            <button type="button" class="hamburger is-closed navbar-btn navbar-left" id="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">
                 <span class="hamb-top"></span>
                 <span class="hamb-middle"></span>
                 <span class="hamb-bottom"></span>
@@ -108,6 +108,7 @@
             trigger.removeClass('is-open').addClass('is-closed');
             $('.overlay').hide();
         }
+        trigger.attr('aria-expanded', trigger.hasClass('is-open'));
     }
 
     $("#menu-toggle").click(function(e) {
