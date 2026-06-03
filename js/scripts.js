@@ -302,8 +302,9 @@ function pullImagesFromWikipedia(site, wikipediaID, imagesContainer) {
     dataType: 'json',
     success: function success(data) {
       clearTimeout(wikiRequestTimeout);
-      for (var i = 0; i < data.query.pages[wikipediaID].images.length; i++) {
-        var imageName = data.query.pages[wikipediaID].images[i].title;
+      var images = data.query.pages[wikipediaID].images || [];
+      for (var i = 0; i < images.length; i++) {
+        var imageName = images[i].title;
         var process = true;
         if (imageName.indexOf('map') >= 0) process = false;
         if (imageName.indexOf('Map') >= 0) process = false;
