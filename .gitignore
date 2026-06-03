@@ -53,6 +53,10 @@ node_modules
 ##########################
 .env
 
+# Claude Code local settings #
+###############################
+.claude/settings.local.json
+
 # Built output #
 ################
 dist/
