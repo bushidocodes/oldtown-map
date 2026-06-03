@@ -319,6 +319,9 @@ function pullImagesFromWikipedia(site, wikipediaID, imagesContainer) {
         if (imageName.indexOf('btn') >= 0) process = false;
         if (process) resolveWikipediaImageURL(imageName, imagesContainer);
       }
+    },
+    error: function error() {
+      clearTimeout(wikiRequestTimeout);
     }
   });
 
@@ -357,7 +360,8 @@ function pullImagesFromWikipedia(site, wikipediaID, imagesContainer) {
         img.style.width = '80px';
         anchor.appendChild(img);
         imagesContainer.appendChild(anchor);
-      }
+      },
+      error: function error() {}
     });
   }
 }
