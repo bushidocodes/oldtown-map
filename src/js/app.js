@@ -554,7 +554,7 @@ var ViewModel = function () {
         ),
         new Site(
             "Black History Museum",
-            "115 Prince St, Alexandria, VA 22314",
+            "902 Wythe St, Alexandria, VA 22314",
             38.812054,
             -77.048045,
             "Originally the segregated library for Alexandria's African American residents, the museum documents the " +
