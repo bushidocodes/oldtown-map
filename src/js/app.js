@@ -284,6 +284,7 @@ function pullImagesFromWikipedia(site, wikipediaID, imagesContainer) {
                 var img = document.createElement('img');
                 img.className = 'wiki-img img-circle';
                 img.src = imageUrl;
+                img.alt = imageName.replace(/^File:/i, '').replace(/\.[^.]+$/, '').replace(/_/g, ' ');
                 img.style.height = '80px';
                 img.style.width = '80px';
                 anchor.appendChild(img);
