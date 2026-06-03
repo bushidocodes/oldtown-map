@@ -18,8 +18,11 @@ To install and build, execute the following:
 git clone https://github.com/bushidocodes/oldtown-map.git
 cd oldtown-map
 npm install
+cp .env.example .env   # then edit .env and add your MAPS_API_KEY
 npm run build
 ```
+
+The build injects `MAPS_API_KEY` from `.env` into `dist/index.html`. Without it the Google Maps embed will not load. Get a Maps JavaScript API key at https://console.cloud.google.com/.
 
 ...and then open ./dist/index.html in your browser of choice
 
