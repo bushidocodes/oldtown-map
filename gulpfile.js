@@ -17,7 +17,6 @@
 //     under dist/bower_components and referenced directly by dist/index.html.
 
 const { src, dest, parallel } = require('gulp');
-const changed = require('gulp-changed');
 const concat = require('gulp-concat');
 const htmlmin = require('gulp-html-minifier-terser');
 const cleanCSS = require('gulp-clean-css');
