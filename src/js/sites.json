@@ -15,7 +15,7 @@
             "address": "121 N Fairfax St, Alexandria, VA 22314",
             "location": {
                 "lat": 38.805228,
-                "lng": 77.042012
+                "lng": -77.042012
             },
             "description": "A Georgian Palladian manor house built in 1753 by merchant and city founder John Carlyle. Here, five royal governors and General Braddock met to discuss funding of the French and Indian War. Daily tours, youth programs, special events, exhibits and lectures offer visitors a chance to experience eighteenth century life through the eyes of one man and his family as he made the journey from English citizen to American patriot. The story of Carlyle House parallels the early history of Alexandria, colonial Virginia, and America and is brought to life through costumed interpreters, guides and fun family programs. Tues.-Sat. 10 a.m.-4 p.m.; Sun. noon-4 p.m. (tours on the hour and half hour, last tour at 4).",
             "wikipediaID": 12593872
@@ -182,7 +182,7 @@
         },
         {
             "name": "Black History Museum",
-            "address": "115 Prince St, Alexandria, VA 22314",
+            "address": "902 Wythe St, Alexandria, VA 22314",
             "location": {
                 "lat": 38.812054,
                 "lng": -77.048045
