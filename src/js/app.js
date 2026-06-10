@@ -1,3 +1,5 @@
+'use strict';
+
 /**
 * @description Represents a site in Old Town Alexandria
 * @constructor
@@ -30,6 +32,7 @@ class Site {
 // hovered over (via the marker itself or via the sidebar)
 
 var infoWindow = null;
+var map = null;
 var markers = ko.observableArray();
 var defaultIcon;
 var highlightedIcon;
@@ -104,7 +107,7 @@ var styles =
 
 function initMap() {
     // Declare and instatiate Google Map object using desired view zoom, custom styling and map type
-    self.map = new google.maps.Map(document.getElementById('map'), {
+    map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 38.806, lng: -77.045 },
         zoom: 16,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
