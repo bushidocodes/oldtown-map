@@ -1,3 +1,5 @@
+'use strict';
+
 /**
 * @description Represents a site in Old Town Alexandria
 * @constructor
