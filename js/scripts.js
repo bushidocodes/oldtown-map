@@ -469,13 +469,17 @@ var ViewModel = function ViewModel() {
     var markerOfSelectedSite = jQuery.grep(markers(), function (marker) {
       return marker.title === site.name;
     });
-    markerOfSelectedSite[0].setIcon(highlightedIcon);
+    if (markerOfSelectedSite.length > 0) {
+      markerOfSelectedSite[0].setIcon(highlightedIcon);
+    }
   };
   self.unhighlightMarkerOfSite = function (site) {
     var markerOfSelectedSite = jQuery.grep(markers(), function (marker) {
       return marker.title === site.name;
     });
-    markerOfSelectedSite[0].setIcon(site.isFavorite() ? favoriteIcon : defaultIcon);
+    if (markerOfSelectedSite.length > 0) {
+      markerOfSelectedSite[0].setIcon(site.isFavorite() ? favoriteIcon : defaultIcon);
+    }
   };
 
   // selectMarker() is used to override the default behavior of when a marker is clicked. This ensures uniform
