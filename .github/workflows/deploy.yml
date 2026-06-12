@@ -3,6 +3,8 @@ name: Build and Deploy
 on:
   push:
     branches: [master]
+  pull_request:
+    branches: [master]
 
 permissions:
   contents: write
@@ -11,9 +13,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'npm'
@@ -25,6 +27,7 @@ jobs:
           MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
 
       - uses: peaceiris/actions-gh-pages@v4
+        if: github.event_name == 'push'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
