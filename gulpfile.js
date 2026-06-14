@@ -1,5 +1,3 @@
-'use strict';
-
 // Gulp 5 build pipeline for oldtown-map.
 //
 // Migrated from gulp 3.9.1, which aborted on Node >= 12 with
@@ -16,13 +14,13 @@
 //     vendor libraries (jQuery, Bootstrap, Knockout, Knockstrap) are vendored
 //     under dist/bower_components and referenced directly by dist/index.html.
 
-const { src, dest, parallel } = require('gulp');
-const concat = require('gulp-concat');
-const htmlmin = require('gulp-html-minifier-terser');
-const cleanCSS = require('gulp-clean-css');
-const babel = require('gulp-babel');
-const replace = require('gulp-replace');
-require('dotenv').config();
+import { src, dest, parallel } from 'gulp';
+import concat from 'gulp-concat';
+import htmlmin from 'gulp-html-minifier-terser';
+import cleanCSS from 'gulp-clean-css';
+import babel from 'gulp-babel';
+import replace from 'gulp-replace';
+import 'dotenv/config';
 
 // Define the directory structure of the project
 const htmlSrc = './src/*.html';
@@ -63,9 +61,5 @@ function images() {
 
 const build = parallel(html, css, js, images);
 
-exports.html = html;
-exports.css = css;
-exports.js = js;
-exports.images = images;
-exports.build = build;
-exports.default = build;
+export { html, css, js, images, build };
+export default build;
