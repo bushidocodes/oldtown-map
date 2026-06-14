@@ -1,5 +1,3 @@
-'use strict';
-
 /**
 * @description Represents a site in Old Town Alexandria
 * @constructor
@@ -295,22 +293,16 @@ function googleMapsError() {
 }
 
 
-//Knockout Functionality
-const ViewModel = function () {
-
-    // ViewModel Data
-    const self = this;
-
-    // Intially set searchString, which is bound to sidebar search field, to an empty string
-    self.searchString = ko.observable('');
-    self.showFavoritesOnly = ko.observable(false);
+class ViewModel {
+    searchString = ko.observable('');
+    showFavoritesOnly = ko.observable(false);
 
     /*Create a Knockout Observable Array of instances of Site with prepopulated lats and lngs and wikipediaIDs
     Site descriptions are pulled from Frommer's at http://www.frommers.com/destinations/alexandria-va/623095 and
     from the Extraordinary Alexandria tourism site at
     http://www.visitalexandriava.com/things-to-do/historic-attractions-and-museums/*/
 
-    self.sites = ko.observableArray([
+    sites = ko.observableArray([
         new Site(
             "Ramsay House & Visitor's Center",
             "221 King St, Alexandria, VA 22314",
@@ -559,24 +551,21 @@ const ViewModel = function () {
     // filteredSites is a Knockout Computed object that stores all sites with a title that matches searchString
     // without regard to case. This filter implementation is based on Ryan Niemeyer's Array Filtering section
     // found at http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
-    self.filteredSites = ko.computed(() => {
-        const sites = self.showFavoritesOnly()
-            ? self.sites().filter(site => site.isFavorite())
-            : self.sites();
-        if (self.searchString() === '') {
+    filteredSites = ko.computed(() => {
+        const sites = this.showFavoritesOnly()
+            ? this.sites().filter(site => site.isFavorite())
+            : this.sites();
+        if (this.searchString() === '') {
             return sites;
         }
-        const filter = self.searchString().toLowerCase();
+        const filter = this.searchString().toLowerCase();
         return sites.filter(site => site.name.toLowerCase().includes(filter));
     });
-
-
-    // Behaviors
 
     // selectSite is called when a specific site is selected from the filtered list of sites in the sidebar
     // It finds the marker with a title that matches the name of the selected site, bounces that marker twice, and
     // then renders the infoWindow on that marker using the data from the selected site.
-    self.selectSite = function (site) {
+    selectSite = (site) => {
         const marker = markers().find(m => m.title === site.name);
         clearInfoWindow();
         //Don't close the sidebar automatically if the window is so wide that the infowindow is fully visible on the visible portion of the map div
@@ -589,11 +578,11 @@ const ViewModel = function () {
         generateInfoWindow(site, map, marker, 1400);
     };
 
-    self.toggleShowFavorites = function () {
-        self.showFavoritesOnly(!self.showFavoritesOnly());
+    toggleShowFavorites = () => {
+        this.showFavoritesOnly(!this.showFavoritesOnly());
     };
 
-    self.toggleFavorite = function (site) {
+    toggleFavorite = (site) => {
         const newValue = !site.isFavorite();
         site.isFavorite(newValue);
         let favorites = JSON.parse(localStorage.getItem('oldtown-favorites') ?? '[]');
@@ -609,24 +598,24 @@ const ViewModel = function () {
 
     // highlightMarkerOfSite() and unhighlightMarkerOfSite() are used to allow the end user to hover over sites in
     // the side bar and see the associated marker of that site highlighted on the map.
-    self.highlightMarkerOfSite = function (site) {
+    highlightMarkerOfSite = (site) => {
         markers().find(m => m.title === site.name)?.setIcon(highlightedIcon);
     };
 
-    self.unhighlightMarkerOfSite = function (site) {
+    unhighlightMarkerOfSite = (site) => {
         const marker = markers().find(m => m.title === site.name);
         marker?.setIcon(site.isFavorite() ? favoriteIcon : defaultIcon);
     };
 
     // selectMarker() is used to override the default behavior of when a marker is clicked. This ensures uniform
     // behavior between the sidebar and the map
-    self.selectMarker = function (marker) {
-        const site = self.sites().find(s => s.name === marker.title);
+    selectMarker = (marker) => {
+        const site = this.sites().find(s => s.name === marker.title);
         clearInfoWindow();
         bounce(marker, 2);
         generateInfoWindow(site, map, marker, 1400);
     };
-}; //endViewModel
+}
 
 const vm = new ViewModel();
 ko.applyBindings(vm);
