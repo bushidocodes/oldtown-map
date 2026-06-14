@@ -4,7 +4,7 @@
     {
       "name": "oldtown-map",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "dist", "-l", "3333"],
+      "runtimeArgs": ["serve", "src", "-l", "3333"],
       "port": 3333
     }
   ]

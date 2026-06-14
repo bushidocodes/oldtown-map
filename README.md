@@ -1,37 +1,82 @@
 # oldtown-map
-oldtown-map is a JavaScript application that renders historic locations in Old Town Alexandria Virginia on a Google Map as markers. It provides a sidebar with a list of these locations and a searchable filter list that filters both the list and the markers on the map. Selecting a marker or a location on the list opens an InfoView with static information about the location. If an item has a Wikipedia ID, then the application displays a link to the Wikipedia page for the location and the infoView loads and scales thumbnail versions of the images on the locaiton's wikipedia page.
 
-## Project Setup
+oldtown-map renders historic locations in Old Town Alexandria, Virginia on an
+interactive map as markers. It provides a sidebar with a searchable, filterable
+list of these locations. Selecting a marker or a list entry opens a popup with
+static information about the location, and — when the location has a Wikipedia
+page — a link to that page plus scaled thumbnail images pulled from it. Sites can
+be marked as favorites, which are persisted in the browser's `localStorage`.
 
-oldtown-map uses ES2015 syntax and transpiles to browser-friendly syntax using [Babel](https://babeljs.io/). It uses [gulp](https://gulpjs.com/) (v5) as the build tool. The following external libraries are vendored under `dist/bower_components` and loaded directly by `dist/index.html`:
-* jQuery
-* Bootstrap
-* Knockout
-* Knockstrap (Knockout bindings for Bootstrap... not currently used by app, but useful)
+## Tech stack
 
-The Simpler-Sidebar Bootstrap theme is provided in this repo.
+The app is intentionally dependency-light and **has no build step**:
 
-Requires Node.js 18 or newer.
+* **Vanilla JS Web Components** — each piece of UI is a custom element with its
+  own Shadow DOM and scoped CSS (`<oldtown-app>`, `<app-navbar>`,
+  `<site-sidebar>`, `<site-list-item>`, `<map-view>`, `<app-alert>`).
+* **[lit-html](https://lit.dev/docs/libraries/standalone-templates/)** for
+  declarative templating/rendering inside those components.
+* **[Leaflet](https://leafletjs.com/)** with **[CARTO](https://carto.com/) dark
+  basemap tiles** (OpenStreetMap data) for the map. These tiles are free and
+  require **no API key**, so there are no secrets to manage.
+* **[MediaWiki API](https://www.mediawiki.org/wiki/API:Main_page)** for Wikipedia
+  thumbnail images (public, keyless, CORS-enabled).
 
-To install and build, execute the following:
+`lit-html` and `leaflet` are loaded as ES modules from the
+[jsDelivr](https://www.jsdelivr.com/) CDN via an
+[import map](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap)
+in [`src/index.html`](src/index.html). The application code in `src/js/` is plain
+ES modules — nothing is transpiled or bundled.
+
+## Running locally
+
+Because the app uses ES modules, it must be served over HTTP (opening
+`index.html` from the filesystem will not work). Any static file server works:
+
 ```
 git clone https://github.com/bushidocodes/oldtown-map.git
 cd oldtown-map
-npm install
-cp .env.example .env   # then edit .env and add your MAPS_API_KEY
-npm run build
+npm run dev          # runs `npx serve src`
 ```
 
-The build injects `MAPS_API_KEY` from `.env` into `dist/index.html`. Without it the Google Maps embed will not load. Get a Maps JavaScript API key at https://console.cloud.google.com/.
+…or use whatever you have on hand, e.g. `python -m http.server -d src 8080`.
+Then open the printed URL in your browser. No `.env`, no API keys, no install.
 
-...and then open ./dist/index.html in your browser of choice
+## Deployment
 
-## Built with love using
-* Visual Studio Code
-* Babel
-* Gulp
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) publishes the
+`src/` directory to GitHub Pages on every push to `master`. There is no build
+job — the static files are deployed as-is.
+
+## Project layout
+
+```
+src/
+  index.html              # host page: import map + <oldtown-app>
+  js/
+    app.js                # entry point (imports the root component)
+    base.js               # Component base class (lit-html render + reactive props)
+    sites.js              # the historic-site data
+    components/
+      oldtown-app.js      # root: owns state, filtering, favorites, wiring
+      app-navbar.js       # title bar + hamburger
+      site-sidebar.js     # search box, favorites toggle, list
+      site-list-item.js   # one list row
+      map-view.js         # Leaflet map, markers, popups, Wikipedia images
+      app-alert.js        # dismissible warning banner
+  images/                 # icons / favicons
+```
+
+## Optional: bundling
+
+The CDN + import-map setup keeps things simple, but if you later want a bundled,
+minified, offline-capable build (e.g. to vendor the dependencies instead of
+relying on the CDN at runtime), [Vite](https://vite.dev/) drops in cleanly:
+point it at `src/`, swap the import-map specifiers for installed packages, and
+deploy `vite build`'s output instead of `src/`.
 
 ## Authors
+
 * Sean McBride - [bushidocodes](https://github.com/bushidocodes)
 
 ## License
