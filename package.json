@@ -2,7 +2,7 @@
   "name": "oldtown-map",
   "version": "1.0.0",
   "description": "oldtown-map is a JavaScript application that renders historic locations in Old Town Alexandria Virginia on a Google Map as markers. It provides a sidebar with a list of these locations and a searchable filter list that filters both the list and the markers on the map. Selecting a marker or a location on the list opens an InfoView with static information about the location. If an item has a Wikipedia ID, then the application displays a link to the Wikipedia page for the location and the infoView loads and scales thumbnail versions of the images on the locaiton's wikipedia page.",
-  "main": "index.js",
+  "type": "module",
   "engines": {
     "node": ">=18"
   },
