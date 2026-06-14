@@ -1,26 +1,11 @@
 {
   "name": "oldtown-map",
-  "version": "1.0.0",
-  "description": "oldtown-map is a JavaScript application that renders historic locations in Old Town Alexandria Virginia on a Google Map as markers. It provides a sidebar with a list of these locations and a searchable filter list that filters both the list and the markers on the map. Selecting a marker or a location on the list opens an InfoView with static information about the location. If an item has a Wikipedia ID, then the application displays a link to the Wikipedia page for the location and the infoView loads and scales thumbnail versions of the images on the locaiton's wikipedia page.",
+  "version": "2.0.0",
+  "description": "oldtown-map renders historic locations in Old Town Alexandria, Virginia on a Leaflet/OpenStreetMap map as markers. A searchable sidebar filters both the list and the markers, sites can be favorited (persisted in localStorage), and selecting a site opens a popup with static information plus thumbnail images pulled from the location's Wikipedia page. Built with vanilla JS web components and lit-html — no build step and no API keys.",
   "type": "module",
-  "engines": {
-    "node": ">=22"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.26.0",
-    "@babel/preset-env": "^7.26.0",
-    "dotenv": "^17.4.2",
-    "gulp": "^5.0.0",
-    "gulp-babel": "^8.0.0",
-"gulp-clean-css": "^4.3.0",
-    "gulp-cli": "^3.0.0",
-    "gulp-concat": "^2.6.1",
-    "gulp-html-minifier-terser": "^8.0.0",
-    "gulp-replace": "^1.1.4"
-  },
   "scripts": {
-    "build": "gulp",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "npx --yes serve src",
+    "start": "npx --yes serve src"
   },
   "repository": {
     "type": "git",
