@@ -66,7 +66,11 @@ export class MapView extends HTMLElement {
             #map { height: 100%; width: 100%; background: #1a1a1a; }
             .popup-title { display: block; margin-bottom: 6px; font-size: 15px; }
             .popup p { margin: 0 0 8px; }
-            .popup-images { max-height: 160px; overflow-y: auto; }
+            /* Fixed height (not max-height) so the popup's total size is known
+               when it opens — Wikipedia images load asynchronously and would
+               otherwise grow the popup upward past the top of the map after
+               autoPan has already run. */
+            .popup-images { height: 92px; overflow-y: auto; }
             .wiki-img {
                 height: 80px; width: 80px; object-fit: cover; border-radius: 50%;
                 margin: 2px; filter: grayscale(100%); transition: filter 0.2s;
@@ -98,7 +102,10 @@ export class MapView extends HTMLElement {
         // Leaflet measures the container on init; the stylesheet may still be
         // loading, so re-measure once it lands and whenever the box resizes.
         link.addEventListener('load', () => this.#map.invalidateSize());
-        new ResizeObserver(() => this.#map.invalidateSize()).observe(mapEl);
+        new ResizeObserver(() => {
+            this.#map.invalidateSize();
+            this.#updatePopupHeights();
+        }).observe(mapEl);
 
         this.#buildMarkers();
     }
@@ -131,7 +138,15 @@ export class MapView extends HTMLElement {
                 fillColor: this.#colorFor(site.name),
             });
             marker.bindTooltip(site.name);
-            marker.bindPopup(() => this.#buildPopup(site), { maxWidth: 280, minWidth: 220 });
+            marker.bindPopup(() => this.#buildPopup(site), {
+                maxWidth: 280,
+                minWidth: 220,
+                // Cap the popup to the map height (Leaflet adds an internal
+                // scrollbar) so a tall popup can't outgrow the viewport and get
+                // clipped off the top — autoPan can then reveal it fully.
+                maxHeight: this.#popupMaxHeight(),
+                autoPanPadding: L.point(16, 16),
+            });
             marker.on('click', () => this.#pulse(marker));
             marker.on('mouseover', () => marker.setStyle({ fillColor: COLOR_HIGHLIGHT }));
             marker.on('mouseout', () => marker.setStyle({ fillColor: this.#colorFor(site.name) }));
@@ -175,9 +190,30 @@ export class MapView extends HTMLElement {
     focusSite(site) {
         const marker = this.#markers.get(site.name);
         if (!marker) return;
-        this.#map.panTo([site.lat, site.lng]);
+        const popup = marker.getPopup();
+        if (popup) popup.options.maxHeight = this.#popupMaxHeight();
+        // Let the popup's autoPan bring both the marker and the (possibly tall)
+        // popup fully into view. A manual panTo here would center the marker and
+        // its animation would cancel autoPan, clipping a tall popup off the top.
         marker.openPopup();
         this.#pulse(marker);
+    }
+
+    // Largest popup height that still fits the map, leaving room for the marker
+    // offset and autoPan padding.
+    #popupMaxHeight() {
+        const mapHeight = this.#map?.getSize().y ?? 0;
+        return Math.max(160, mapHeight - 80);
+    }
+
+    // Keep every popup's height cap in sync with the current map size so it is
+    // correct whichever way a popup is opened (marker click or focusSite).
+    #updatePopupHeights() {
+        const maxHeight = this.#popupMaxHeight();
+        for (const marker of this.#markers.values()) {
+            const popup = marker.getPopup();
+            if (popup) popup.options.maxHeight = maxHeight;
+        }
     }
 
     // Briefly grow and shrink a marker twice — the vector-marker replacement for
