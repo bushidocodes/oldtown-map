@@ -1,45 +1,27 @@
 import { render, type TemplateResult } from 'lit-html';
+import type { EmitArgs, OldtownEventMap } from './events.js';
+
+/** Generic constructor type, used by the {@link reactiveProps} mixin. */
+type Constructor<T = object> = new (...args: any[]) => T;
 
 /**
  * Minimal base class for custom elements that render with lit-html into a shadow root.
  *
- * Subclasses:
- *   - declare reactive properties via `static observedProps = ['foo', 'bar']`
- *     (assigning to `this.foo` schedules a re-render), mirror each with a
- *     `declare foo: T;` field so TypeScript knows about the accessor the
- *     constructor defines dynamically, and
- *   - implement `template()` returning a lit-html `TemplateResult`.
+ * Reactive properties are added with the {@link reactiveProps} mixin; subclasses
+ * implement `template()` returning a lit-html `TemplateResult`.
  *
- * Renders are batched on the microtask queue so setting several properties in a
- * single turn only triggers one render — the role Knockout's dependency tracking
- * used to play.
+ * Renders are batched on the microtask queue so setting several properties in a single
+ * turn only triggers one render — the role Knockout's dependency tracking used to play.
  */
 export class Component extends HTMLElement {
-    static observedProps?: string[];
-
     // `attachShadow({ mode: 'open' })` in the constructor guarantees this is set.
     declare readonly shadowRoot: ShadowRoot;
 
-    private _props: Record<string, unknown> = {};
     private _renderScheduled = false;
 
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
-
-        for (const name of (this.constructor as typeof Component).observedProps ?? []) {
-            Object.defineProperty(this, name, {
-                configurable: true,
-                enumerable: true,
-                get(this: Component) {
-                    return this._props[name];
-                },
-                set(this: Component, value: unknown) {
-                    this._props[name] = value;
-                    this.requestRender();
-                },
-            });
-        }
     }
 
     connectedCallback(): void {
@@ -55,13 +37,62 @@ export class Component extends HTMLElement {
         });
     }
 
-    /** Dispatch a composed CustomEvent that crosses shadow boundaries to ancestors. */
-    emit<T = unknown>(type: string, detail?: T): void {
-        this.dispatchEvent(new CustomEvent(type, { detail, bubbles: true, composed: true }));
+    /**
+     * Dispatch a composed CustomEvent that crosses shadow boundaries to ancestors.
+     * Typed against {@link OldtownEventMap}: the event name fixes the detail type,
+     * and `void` events take no second argument.
+     */
+    emit<K extends keyof OldtownEventMap>(type: K, ...args: EmitArgs<K>): void;
+    emit(type: string, ...args: unknown[]): void {
+        this.dispatchEvent(new CustomEvent(type, { detail: args[0], bubbles: true, composed: true }));
     }
 
     /** Subclasses override this to return a lit-html template. */
     template(): TemplateResult | null {
         return null;
     }
+}
+
+/**
+ * Mixin that adds reactive properties to a {@link Component} subclass: assigning to any
+ * of them stores the value and schedules a re-render. The `defaults` object is the single
+ * source of truth — its keys and value types become the element's typed properties, so a
+ * renamed or mistyped property is a compile error. (The previous `static observedProps`
+ * string list could silently drift from the declared fields; this can't.)
+ *
+ *     class AppNavbar extends reactiveProps(Component, { open: false }) {
+ *         template() { return html`…${this.open}…`; } // this.open is typed `boolean`
+ *     }
+ */
+export function reactiveProps<TBase extends Constructor<Component>, P extends Record<string, unknown>>(
+    Base: TBase,
+    defaults: P,
+): TBase & Constructor<P> {
+    // Per-instance value store, keyed off the element so the prototype accessors below
+    // stay shared. Defined in the closure so no backing field leaks onto the element.
+    const store = new WeakMap<Component, Record<string, unknown>>();
+
+    class WithReactiveProps extends Base {
+        constructor(...args: any[]) {
+            super(...args);
+            store.set(this, { ...defaults });
+        }
+    }
+
+    for (const key of Object.keys(defaults)) {
+        Object.defineProperty(WithReactiveProps.prototype, key, {
+            configurable: true,
+            enumerable: true,
+            get(this: Component): unknown {
+                return store.get(this)?.[key];
+            },
+            set(this: Component, value: unknown) {
+                const props = store.get(this);
+                if (props) props[key] = value;
+                this.requestRender();
+            },
+        });
+    }
+
+    return WithReactiveProps as unknown as TBase & Constructor<P>;
 }

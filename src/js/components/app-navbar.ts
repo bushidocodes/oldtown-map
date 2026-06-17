@@ -1,14 +1,11 @@
 import { html, type TemplateResult } from 'lit-html';
-import { Component } from '../base.js';
+import { Component, reactiveProps } from '../base.js';
 
 /**
  * Top navigation bar with the app title and a hamburger button that toggles the
  * sidebar drawer. Emits `toggle-sidebar` on click.
  */
-export class AppNavbar extends Component {
-    static observedProps = ['open'];
-    declare open: boolean;
-
+export class AppNavbar extends reactiveProps(Component, { open: false }) {
     template(): TemplateResult {
         return html`
             <style>

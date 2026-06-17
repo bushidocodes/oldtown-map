@@ -1,5 +1,5 @@
 import { html, type TemplateResult } from 'lit-html';
-import { Component } from '../base.js';
+import { Component, reactiveProps } from '../base.js';
 import type { Site } from '../sites.js';
 
 /**
@@ -10,11 +10,10 @@ import type { Site } from '../sites.js';
  *   - `favorite-toggle` when the star is clicked (does not also select)
  *   - `site-hover` / `site-unhover` on pointer enter/leave
  */
-export class SiteListItem extends Component {
-    static observedProps = ['site', 'favorite'];
-    declare site: Site | undefined;
-    declare favorite: boolean;
-
+export class SiteListItem extends reactiveProps(Component, {
+    site: undefined as Site | undefined,
+    favorite: false,
+}) {
     template(): TemplateResult {
         const site = this.site;
         if (!site) return html``;
@@ -71,7 +70,7 @@ export class SiteListItem extends Component {
 
     #onStarClick = (event: Event): void => {
         event.stopPropagation();
-        this.emit('favorite-toggle', this.site);
+        if (this.site) this.emit('favorite-toggle', this.site);
     };
 }
 

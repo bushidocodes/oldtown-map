@@ -1,5 +1,5 @@
 import { html, type TemplateResult } from 'lit-html';
-import { Component } from '../base.js';
+import { Component, reactiveProps } from '../base.js';
 import './site-list-item.js';
 import type { Site } from '../sites.js';
 
@@ -17,16 +17,15 @@ import type { Site } from '../sites.js';
  *
  * Emits: `search-change` (detail: string), `toggle-favorites`.
  */
-export class SiteSidebar extends Component {
-    static observedProps = ['sites', 'favorites', 'searchString', 'showFavoritesOnly'];
-    declare sites: Site[] | undefined;
-    declare favorites: Set<string> | undefined;
-    declare searchString: string | undefined;
-    declare showFavoritesOnly: boolean | undefined;
-
+export class SiteSidebar extends reactiveProps(Component, {
+    sites: [] as Site[],
+    favorites: new Set<string>(),
+    searchString: '',
+    showFavoritesOnly: false,
+}) {
     template(): TemplateResult {
-        const sites = this.sites ?? [];
-        const favorites = this.favorites ?? new Set<string>();
+        const sites = this.sites;
+        const favorites = this.favorites;
         return html`
             <style>
                 :host {

@@ -6,6 +6,7 @@ import './site-sidebar.js';
 import './app-alert.js';
 import './map-view.js';
 import type { MapView } from './map-view.js';
+import type { OldtownEvent } from '../events.js';
 
 const FAVORITES_KEY = 'oldtown-favorites';
 // Below this viewport width, selecting a site auto-closes the drawer so the
@@ -27,7 +28,8 @@ export class OldtownApp extends Component {
 
     #loadFavorites(): string[] {
         try {
-            return JSON.parse(localStorage.getItem(FAVORITES_KEY) ?? '[]');
+            const parsed: unknown = JSON.parse(localStorage.getItem(FAVORITES_KEY) ?? '[]');
+            return Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === 'string') : [];
         } catch {
             return [];
         }
@@ -54,7 +56,7 @@ export class OldtownApp extends Component {
 
     // --- event handlers -----------------------------------------------------
 
-    #onSearchChange = (e: CustomEvent<string>): void => {
+    #onSearchChange = (e: OldtownEvent<'search-change'>): void => {
         this.#searchString = e.detail;
         this.requestRender();
     };
@@ -74,7 +76,7 @@ export class OldtownApp extends Component {
         this.requestRender();
     };
 
-    #onSiteSelect = (e: CustomEvent<Site>): void => {
+    #onSiteSelect = (e: OldtownEvent<'site-select'>): void => {
         const site = e.detail;
         if (window.innerWidth < AUTOCLOSE_WIDTH) {
             this.#sidebarOpen = false;
@@ -83,7 +85,7 @@ export class OldtownApp extends Component {
         this.#mapView?.focusSite(site);
     };
 
-    #onFavoriteToggle = (e: CustomEvent<Site>): void => {
+    #onFavoriteToggle = (e: OldtownEvent<'favorite-toggle'>): void => {
         const { name } = e.detail;
         if (this.#favorites.has(name)) this.#favorites.delete(name);
         else this.#favorites.add(name);
@@ -92,8 +94,8 @@ export class OldtownApp extends Component {
         this.requestRender();
     };
 
-    #onSiteHover = (e: CustomEvent<Site>): void => this.#mapView?.highlight(e.detail.name);
-    #onSiteUnhover = (e: CustomEvent<Site>): void => this.#mapView?.unhighlight(e.detail.name);
+    #onSiteHover = (e: OldtownEvent<'site-hover'>): void => this.#mapView?.highlight(e.detail.name);
+    #onSiteUnhover = (e: OldtownEvent<'site-unhover'>): void => this.#mapView?.unhighlight(e.detail.name);
 
     #onWikipediaError = (): void => {
         this.#wikipediaWarning = true;

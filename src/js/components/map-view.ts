@@ -12,7 +12,12 @@ const TILE_ATTRIBUTION =
 const CENTER: L.LatLngTuple = [38.806, -77.045];
 const ZOOM = 16;
 
-const MARKER_BASE = { radius: 9, color: '#333333', weight: 1.5, fillOpacity: 1 };
+const MARKER_BASE = {
+    radius: 9,
+    color: '#333333',
+    weight: 1.5,
+    fillOpacity: 1,
+} satisfies L.CircleMarkerOptions;
 const COLOR_DEFAULT = '#ffffff';
 const COLOR_HIGHLIGHT = '#ff661a';
 const COLOR_FAVORITE = '#ffd700';
@@ -23,6 +28,16 @@ const BLOCKED_IMAGE_TERMS = [
 ];
 
 const WIKIPEDIA_ENDPOINT = 'https://en.wikipedia.org/w/api.php';
+
+// Shapes of the two MediaWiki API responses this component consumes. Only the
+// fields actually read are modeled; everything is optional because the payload
+// is untrusted (a missing page, a renamed key, etc. must not throw).
+interface WikiImagesResponse {
+    query?: { pages?: Record<string, { images?: Array<{ title: string }> }> };
+}
+interface WikiImageInfoResponse {
+    query?: { pages?: Record<string, { imageinfo?: Array<{ url: string }> }> };
+}
 
 /**
  * Leaflet map wrapper. Unlike the lit-html components, this element drives its
@@ -113,8 +128,8 @@ export class MapView extends HTMLElement {
         this.#buildMarkers();
     }
 
-    #emit(type: string, detail?: unknown): void {
-        this.dispatchEvent(new CustomEvent(type, { detail, bubbles: true, composed: true }));
+    #emit(type: 'tile-error' | 'wikipedia-error'): void {
+        this.dispatchEvent(new CustomEvent(type, { bubbles: true, composed: true }));
     }
 
     set sites(value: Site[] | undefined) {
@@ -295,9 +310,9 @@ export class MapView extends HTMLElement {
                 origin: '*',
             });
             const response = await fetch(`${WIKIPEDIA_ENDPOINT}?${params}`);
-            const data = await response.json();
+            const data = (await response.json()) as WikiImagesResponse;
             clearTimeout(timeout);
-            const images = data.query.pages[wikipediaID].images ?? [];
+            const images = data.query?.pages?.[wikipediaID]?.images ?? [];
             for (const image of images) {
                 if (!BLOCKED_IMAGE_TERMS.some((term) => image.title.includes(term))) {
                     this.#resolveImageURL(image.title, imagesContainer);
@@ -319,9 +334,11 @@ export class MapView extends HTMLElement {
                 origin: '*',
             });
             const response = await fetch(`${WIKIPEDIA_ENDPOINT}?${params}`);
-            const data = await response.json();
-            const [pageId] = Object.keys(data.query.pages);
-            const imageUrl = data.query.pages[pageId].imageinfo[0].url;
+            const data = (await response.json()) as WikiImageInfoResponse;
+            const pages = data.query?.pages;
+            const pageId = pages ? Object.keys(pages)[0] : undefined;
+            const imageUrl = pageId ? pages?.[pageId]?.imageinfo?.[0]?.url : undefined;
+            if (!imageUrl) return;
             const parsed = new URL(imageUrl);
             if (parsed.protocol !== 'https:') return;
             if (!parsed.hostname.endsWith('.wikimedia.org') && !parsed.hostname.endsWith('.wikipedia.org')) {

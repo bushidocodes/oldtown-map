@@ -1,14 +1,11 @@
 import { html, type TemplateResult } from 'lit-html';
-import { Component } from '../base.js';
+import { Component, reactiveProps } from '../base.js';
 
 /**
  * Dismissible warning banner that floats over the top-left of the map.
  * Props: message (string). Emits `dismiss` when the close button is clicked.
  */
-export class AppAlert extends Component {
-    static observedProps = ['message'];
-    declare message: string;
-
+export class AppAlert extends reactiveProps(Component, { message: '' }) {
     template(): TemplateResult {
         return html`
             <style>
