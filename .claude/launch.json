@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "oldtown-map",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "src", "-l", "3333"],
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--", "--port", "3333", "--strictPort"],
       "port": 3333
     }
   ]

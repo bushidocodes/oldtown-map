@@ -9,11 +9,13 @@ be marked as favorites, which are persisted in the browser's `localStorage`.
 
 ## Tech stack
 
-The app is intentionally dependency-light and **has no build step**:
+The app is intentionally dependency-light:
 
-* **Vanilla JS Web Components** — each piece of UI is a custom element with its
+* **TypeScript Web Components** — each piece of UI is a custom element with its
   own Shadow DOM and scoped CSS (`<oldtown-app>`, `<app-navbar>`,
   `<site-sidebar>`, `<site-list-item>`, `<map-view>`, `<app-alert>`).
+* **[Vite](https://vite.dev/)** compiles the TypeScript and bundles the app; in
+  development it serves the source with hot-module reloading.
 * **[lit-html](https://lit.dev/docs/libraries/standalone-templates/)** for
   declarative templating/rendering inside those components.
 * **[Leaflet](https://leafletjs.com/)** with **[CARTO](https://carto.com/) dark
@@ -22,58 +24,55 @@ The app is intentionally dependency-light and **has no build step**:
 * **[MediaWiki API](https://www.mediawiki.org/wiki/API:Main_page)** for Wikipedia
   thumbnail images (public, keyless, CORS-enabled).
 
-`lit-html` and `leaflet` are loaded as ES modules from the
-[jsDelivr](https://www.jsdelivr.com/) CDN via an
-[import map](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap)
-in [`src/index.html`](src/index.html). The application code in `src/js/` is plain
-ES modules — nothing is transpiled or bundled.
+`lit-html` and `leaflet` are installed from npm and bundled into the build, so
+there are no CDN dependencies at runtime. The application code lives in
+[`src/js/`](src/js) as TypeScript ES modules.
 
 ## Running locally
-
-Because the app uses ES modules, it must be served over HTTP (opening
-`index.html` from the filesystem will not work). Any static file server works:
 
 ```
 git clone https://github.com/bushidocodes/oldtown-map.git
 cd oldtown-map
-npm run dev          # runs `npx serve src`
+npm install
+npm run dev          # Vite dev server with hot-module reloading
 ```
 
-…or use whatever you have on hand, e.g. `python -m http.server -d src 8080`.
-Then open the printed URL in your browser. No `.env`, no API keys, no install.
+Then open the printed URL in your browser. No `.env` and no API keys are needed.
+
+Other scripts:
+
+* `npm run build` — type-check (`tsc`) and produce a bundled, minified build in `dist/`
+* `npm run preview` — serve the contents of `dist/` locally to preview the build
+* `npm run typecheck` — run the TypeScript type-checker only
 
 ## Deployment
 
-[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) publishes the
-`src/` directory to GitHub Pages on every push to `master`. There is no build
-job — the static files are deployed as-is.
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) builds the app
+with `npm run build` and publishes the generated `dist/` directory to GitHub
+Pages on every push to `master`.
 
 ## Project layout
 
 ```
 src/
-  index.html              # host page: import map + <oldtown-app>
+  index.html              # host page: <oldtown-app> + entry <script src="js/app.ts">
   js/
-    app.js                # entry point (imports the root component)
-    base.js               # Component base class (lit-html render + reactive props)
-    sites.js              # the historic-site data
+    app.ts                # entry point (imports the root component)
+    base.ts               # Component base class (lit-html render + reactive props)
+    sites.ts              # the historic-site data (and the `Site` type)
     components/
-      oldtown-app.js      # root: owns state, filtering, favorites, wiring
-      app-navbar.js       # title bar + hamburger
-      site-sidebar.js     # search box, favorites toggle, list
-      site-list-item.js   # one list row
-      map-view.js         # Leaflet map, markers, popups, Wikipedia images
-      app-alert.js        # dismissible warning banner
+      oldtown-app.ts      # root: owns state, filtering, favorites, wiring
+      app-navbar.ts       # title bar + hamburger
+      site-sidebar.ts     # search box, favorites toggle, list
+      site-list-item.ts   # one list row
+      map-view.ts         # Leaflet map, markers, popups, Wikipedia images
+      app-alert.ts        # dismissible warning banner
+  vite-env.d.ts           # Vite client type reference
   images/                 # icons / favicons
+
+vite.config.ts            # Vite config (root: src/, build output: dist/)
+tsconfig.json             # TypeScript compiler options
 ```
-
-## Optional: bundling
-
-The CDN + import-map setup keeps things simple, but if you later want a bundled,
-minified, offline-capable build (e.g. to vendor the dependencies instead of
-relying on the CDN at runtime), [Vite](https://vite.dev/) drops in cleanly:
-point it at `src/`, swap the import-map specifiers for installed packages, and
-deploy `vite build`'s output instead of `src/`.
 
 ## Authors
 

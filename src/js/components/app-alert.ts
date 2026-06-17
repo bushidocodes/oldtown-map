@@ -1,4 +1,4 @@
-import { html } from 'lit-html';
+import { html, type TemplateResult } from 'lit-html';
 import { Component } from '../base.js';
 
 /**
@@ -7,8 +7,9 @@ import { Component } from '../base.js';
  */
 export class AppAlert extends Component {
     static observedProps = ['message'];
+    declare message: string;
 
-    template() {
+    template(): TemplateResult {
         return html`
             <style>
                 :host {

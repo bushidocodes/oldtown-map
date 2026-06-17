@@ -1,5 +1,6 @@
-import { html } from 'lit-html';
+import { html, type TemplateResult } from 'lit-html';
 import { Component } from '../base.js';
+import type { Site } from '../sites.js';
 
 /**
  * A single row in the sidebar site list: a favorite star plus the site name.
@@ -11,8 +12,10 @@ import { Component } from '../base.js';
  */
 export class SiteListItem extends Component {
     static observedProps = ['site', 'favorite'];
+    declare site: Site | undefined;
+    declare favorite: boolean;
 
-    template() {
+    template(): TemplateResult {
         const site = this.site;
         if (!site) return html``;
         return html`
@@ -66,7 +69,7 @@ export class SiteListItem extends Component {
         `;
     }
 
-    #onStarClick = (event) => {
+    #onStarClick = (event: Event): void => {
         event.stopPropagation();
         this.emit('favorite-toggle', this.site);
     };
