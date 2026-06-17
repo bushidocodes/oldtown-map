@@ -12,12 +12,12 @@
     <meta name="apple-mobile-web-app-title" content="Old Town Map">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-    <link rel="icon" href="images/apple-touch-icon-120x120.png">
-    <link rel="apple-touch-icon" href="images/apple-touch-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="images/apple-touch-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="images/apple-touch-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="167x167" href="images/apple-touch-icon-167x167.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon-180x180.png">
+    <link rel="icon" href="./assets/apple-touch-icon-120x120-DZkk8nbD.png">
+    <link rel="apple-touch-icon" href="./assets/apple-touch-icon-120x120-DZkk8nbD.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./assets/apple-touch-icon-152x152-BQ7f0o86.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="./assets/apple-touch-icon-120x120-DZkk8nbD.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="./assets/apple-touch-icon-167x167-nkMcS9ms.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon-180x180-BJNQK5lR.png">
 
     <style>
         html, body { height: 100%; margin: 0; }
@@ -30,21 +30,14 @@
         oldtown-app { height: 100%; }
     </style>
 
-    <!-- Dependencies are loaded as ES modules from the jsDelivr CDN via an import
-         map, so there is no build step. See README for the (optional) bundling path. -->
-    <script type="importmap">
-    {
-        "imports": {
-            "lit-html": "https://esm.run/lit-html@3.2.1",
-            "leaflet": "https://esm.run/leaflet@1.9.4"
-        }
-    }
-    </script>
+    <!-- Dependencies are installed from npm and bundled by Vite; the entry module
+         below is TypeScript, which Vite compiles on the fly in dev and bundles
+         for production. -->
+  <script type="module" crossorigin src="./assets/index-TicBe4cG.js"></script>
 </head>
 
 <body>
     <oldtown-app></oldtown-app>
-    <script type="module" src="js/app.js"></script>
 </body>
 
 </html>
