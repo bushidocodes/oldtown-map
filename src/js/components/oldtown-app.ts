@@ -1,10 +1,11 @@
-import { html } from 'lit-html';
+import { html, type TemplateResult } from 'lit-html';
 import { Component } from '../base.js';
-import { sites } from '../sites.js';
+import { sites, type Site } from '../sites.js';
 import './app-navbar.js';
 import './site-sidebar.js';
 import './app-alert.js';
 import './map-view.js';
+import type { MapView } from './map-view.js';
 
 const FAVORITES_KEY = 'oldtown-favorites';
 // Below this viewport width, selecting a site auto-closes the drawer so the
@@ -16,15 +17,15 @@ const AUTOCLOSE_WIDTH = 1500;
  * persists favorites, and coordinates the sidebar and map.
  */
 export class OldtownApp extends Component {
-    #sites = sites;
-    #favorites = new Set(this.#loadFavorites());
+    #sites: Site[] = sites;
+    #favorites = new Set<string>(this.#loadFavorites());
     #searchString = '';
     #showFavoritesOnly = false;
     #sidebarOpen = false;
     #wikipediaWarning = false;
     #tileWarning = false;
 
-    #loadFavorites() {
+    #loadFavorites(): string[] {
         try {
             return JSON.parse(localStorage.getItem(FAVORITES_KEY) ?? '[]');
         } catch {
@@ -32,11 +33,11 @@ export class OldtownApp extends Component {
         }
     }
 
-    #saveFavorites() {
+    #saveFavorites(): void {
         localStorage.setItem(FAVORITES_KEY, JSON.stringify([...this.#favorites]));
     }
 
-    get #filteredSites() {
+    get #filteredSites(): Site[] {
         let result = this.#showFavoritesOnly
             ? this.#sites.filter((s) => this.#favorites.has(s.name))
             : this.#sites;
@@ -47,33 +48,33 @@ export class OldtownApp extends Component {
         return result;
     }
 
-    get #mapView() {
-        return this.shadowRoot.querySelector('map-view');
+    get #mapView(): MapView | null {
+        return this.shadowRoot.querySelector<MapView>('map-view');
     }
 
     // --- event handlers -----------------------------------------------------
 
-    #onSearchChange = (e) => {
+    #onSearchChange = (e: CustomEvent<string>): void => {
         this.#searchString = e.detail;
         this.requestRender();
     };
 
-    #onToggleFavorites = () => {
+    #onToggleFavorites = (): void => {
         this.#showFavoritesOnly = !this.#showFavoritesOnly;
         this.requestRender();
     };
 
-    #onToggleSidebar = () => {
+    #onToggleSidebar = (): void => {
         this.#sidebarOpen = !this.#sidebarOpen;
         this.requestRender();
     };
 
-    #onCloseSidebar = () => {
+    #onCloseSidebar = (): void => {
         this.#sidebarOpen = false;
         this.requestRender();
     };
 
-    #onSiteSelect = (e) => {
+    #onSiteSelect = (e: CustomEvent<Site>): void => {
         const site = e.detail;
         if (window.innerWidth < AUTOCLOSE_WIDTH) {
             this.#sidebarOpen = false;
@@ -82,7 +83,7 @@ export class OldtownApp extends Component {
         this.#mapView?.focusSite(site);
     };
 
-    #onFavoriteToggle = (e) => {
+    #onFavoriteToggle = (e: CustomEvent<Site>): void => {
         const { name } = e.detail;
         if (this.#favorites.has(name)) this.#favorites.delete(name);
         else this.#favorites.add(name);
@@ -91,20 +92,20 @@ export class OldtownApp extends Component {
         this.requestRender();
     };
 
-    #onSiteHover = (e) => this.#mapView?.highlight(e.detail.name);
-    #onSiteUnhover = (e) => this.#mapView?.unhighlight(e.detail.name);
+    #onSiteHover = (e: CustomEvent<Site>): void => this.#mapView?.highlight(e.detail.name);
+    #onSiteUnhover = (e: CustomEvent<Site>): void => this.#mapView?.unhighlight(e.detail.name);
 
-    #onWikipediaError = () => {
+    #onWikipediaError = (): void => {
         this.#wikipediaWarning = true;
         this.requestRender();
     };
 
-    #onTileError = () => {
+    #onTileError = (): void => {
         this.#tileWarning = true;
         this.requestRender();
     };
 
-    template() {
+    template(): TemplateResult {
         const filtered = this.#filteredSites;
         const visibleNames = new Set(filtered.map((s) => s.name));
         return html`

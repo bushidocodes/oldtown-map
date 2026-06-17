@@ -1,4 +1,4 @@
-import { html } from 'lit-html';
+import { html, type TemplateResult } from 'lit-html';
 import { Component } from '../base.js';
 
 /**
@@ -7,8 +7,9 @@ import { Component } from '../base.js';
  */
 export class AppNavbar extends Component {
     static observedProps = ['open'];
+    declare open: boolean;
 
-    template() {
+    template(): TemplateResult {
         return html`
             <style>
                 :host {
@@ -72,7 +73,7 @@ export class AppNavbar extends Component {
         `;
     }
 
-    requestRender() {
+    requestRender(): void {
         // Reflect `open` to an attribute so the :host([data-open]) animation works.
         this.toggleAttribute('data-open', !!this.open);
         super.requestRender();

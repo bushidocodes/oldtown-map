@@ -1,7 +1,7 @@
 name: Deploy
 
-# No build step: the app is static and loads its dependencies from a CDN, so we
-# publish ./src to GitHub Pages directly.
+# Build the TypeScript app with Vite and publish the generated ./dist directory
+# to GitHub Pages.
 on:
   push:
     branches: [master]
@@ -15,7 +15,15 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./src
+          publish_dir: ./dist

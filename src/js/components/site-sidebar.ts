@@ -1,6 +1,7 @@
-import { html } from 'lit-html';
+import { html, type TemplateResult } from 'lit-html';
 import { Component } from '../base.js';
 import './site-list-item.js';
+import type { Site } from '../sites.js';
 
 /**
  * Sidebar content: heading, search box, favorites toggle, and the filtered list
@@ -18,10 +19,14 @@ import './site-list-item.js';
  */
 export class SiteSidebar extends Component {
     static observedProps = ['sites', 'favorites', 'searchString', 'showFavoritesOnly'];
+    declare sites: Site[] | undefined;
+    declare favorites: Set<string> | undefined;
+    declare searchString: string | undefined;
+    declare showFavoritesOnly: boolean | undefined;
 
-    template() {
+    template(): TemplateResult {
         const sites = this.sites ?? [];
-        const favorites = this.favorites ?? new Set();
+        const favorites = this.favorites ?? new Set<string>();
         return html`
             <style>
                 :host {
@@ -86,7 +91,8 @@ export class SiteSidebar extends Component {
                     type="search"
                     placeholder="Search"
                     .value=${this.searchString ?? ''}
-                    @input=${(e) => this.emit('search-change', e.target.value)}
+                    @input=${(e: Event) =>
+                        this.emit('search-change', (e.target as HTMLInputElement).value)}
                 />
                 <button
                     class="fav-toggle ${this.showFavoritesOnly ? 'active' : ''}"

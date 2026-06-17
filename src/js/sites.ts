@@ -7,18 +7,17 @@
 // `wikipediaID` is the page-id of the site's English Wikipedia article, or null if it has none.
 // It is used to look up thumbnail images via the MediaWiki API.
 
-/**
- * @typedef {Object} Site
- * @property {string} name
- * @property {string} address
- * @property {number} lat
- * @property {number} lng
- * @property {string} description - May contain trusted inline HTML (e.g. <br>).
- * @property {number|null} wikipediaID
- */
+export interface Site {
+    name: string;
+    address: string;
+    lat: number;
+    lng: number;
+    /** May contain trusted inline HTML (e.g. `<br>`). */
+    description: string;
+    wikipediaID: number | null;
+}
 
-/** @type {Site[]} */
-export const sites = [
+export const sites: Site[] = [
     {
         name: "Ramsay House & Visitor's Center",
         address: "221 King St, Alexandria, VA 22314",

@@ -1,6 +1,6 @@
 import L from 'leaflet';
-
-const LEAFLET_CSS = 'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css';
+import leafletCss from 'leaflet/dist/leaflet.css?url';
+import type { Site } from '../sites.js';
 
 // CARTO "Dark Matter" basemap — keyless, free with attribution. Chosen to
 // approximate the dark Google Maps styling the app used previously.
@@ -9,7 +9,7 @@ const TILE_ATTRIBUTION =
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors ' +
     '&copy; <a href="https://carto.com/attributions">CARTO</a>';
 
-const CENTER = [38.806, -77.045];
+const CENTER: L.LatLngTuple = [38.806, -77.045];
 const ZOOM = 16;
 
 const MARKER_BASE = { radius: 9, color: '#333333', weight: 1.5, fillOpacity: 1 };
@@ -38,13 +38,15 @@ const WIKIPEDIA_ENDPOINT = 'https://en.wikipedia.org/w/api.php';
  * Emits: `wikipedia-error` (image lookups timed out), `tile-error` (tiles failed).
  */
 export class MapView extends HTMLElement {
-    #map = null;
-    #layer = null;
-    #markers = new Map(); // name -> L.CircleMarker
-    #sites = [];
-    #favorites = new Set();
-    #visible = null; // Set<string> | null (null = all visible)
-    #highlighted = null;
+    declare readonly shadowRoot: ShadowRoot;
+
+    #map: L.Map | null = null;
+    #layer: L.LayerGroup | null = null;
+    #markers = new Map<string, L.CircleMarker>(); // name -> L.CircleMarker
+    #sites: Site[] = [];
+    #favorites = new Set<string>();
+    #visible: Set<string> | null = null; // null = all visible
+    #highlighted: string | null = null;
     #warnedWikipedia = false;
     #warnedTiles = false;
 
@@ -53,12 +55,12 @@ export class MapView extends HTMLElement {
         this.attachShadow({ mode: 'open' });
     }
 
-    connectedCallback() {
+    connectedCallback(): void {
         if (this.#map) return;
 
         const link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = LEAFLET_CSS;
+        link.href = leafletCss;
 
         const style = document.createElement('style');
         style.textContent = `
@@ -83,7 +85,8 @@ export class MapView extends HTMLElement {
 
         this.shadowRoot.append(link, style, mapEl);
 
-        this.#map = L.map(mapEl, { center: CENTER, zoom: ZOOM });
+        const map = L.map(mapEl, { center: CENTER, zoom: ZOOM });
+        this.#map = map;
 
         const tiles = L.tileLayer(TILE_URL, {
             attribution: TILE_ATTRIBUTION,
@@ -95,41 +98,41 @@ export class MapView extends HTMLElement {
             this.#warnedTiles = true;
             this.#emit('tile-error');
         });
-        tiles.addTo(this.#map);
+        tiles.addTo(map);
 
-        this.#layer = L.layerGroup().addTo(this.#map);
+        this.#layer = L.layerGroup().addTo(map);
 
         // Leaflet measures the container on init; the stylesheet may still be
         // loading, so re-measure once it lands and whenever the box resizes.
-        link.addEventListener('load', () => this.#map.invalidateSize());
+        link.addEventListener('load', () => map.invalidateSize());
         new ResizeObserver(() => {
-            this.#map.invalidateSize();
+            map.invalidateSize();
             this.#updatePopupHeights();
         }).observe(mapEl);
 
         this.#buildMarkers();
     }
 
-    #emit(type, detail) {
+    #emit(type: string, detail?: unknown): void {
         this.dispatchEvent(new CustomEvent(type, { detail, bubbles: true, composed: true }));
     }
 
-    set sites(value) {
+    set sites(value: Site[] | undefined) {
         this.#sites = value ?? [];
         this.#buildMarkers();
     }
 
-    set favorites(value) {
+    set favorites(value: Set<string> | undefined) {
         this.#favorites = value ?? new Set();
         this.#restyleAll();
     }
 
-    set visibleNames(value) {
+    set visibleNames(value: Set<string> | null | undefined) {
         this.#visible = value ?? null;
         this.#applyVisibility();
     }
 
-    #buildMarkers() {
+    #buildMarkers(): void {
         if (!this.#map || this.#markers.size > 0 || this.#sites.length === 0) return;
 
         for (const site of this.#sites) {
@@ -155,39 +158,40 @@ export class MapView extends HTMLElement {
         this.#applyVisibility();
     }
 
-    #colorFor(name) {
+    #colorFor(name: string): string {
         if (this.#highlighted === name) return COLOR_HIGHLIGHT;
         if (this.#favorites.has(name)) return COLOR_FAVORITE;
         return COLOR_DEFAULT;
     }
 
-    #restyleAll() {
+    #restyleAll(): void {
         for (const [name, marker] of this.#markers) {
             marker.setStyle({ fillColor: this.#colorFor(name) });
         }
     }
 
-    #applyVisibility() {
-        if (!this.#layer) return;
+    #applyVisibility(): void {
+        const layer = this.#layer;
+        if (!layer) return;
         for (const [name, marker] of this.#markers) {
             const shouldShow = this.#visible === null || this.#visible.has(name);
-            const isShown = this.#layer.hasLayer(marker);
-            if (shouldShow && !isShown) this.#layer.addLayer(marker);
-            else if (!shouldShow && isShown) this.#layer.removeLayer(marker);
+            const isShown = layer.hasLayer(marker);
+            if (shouldShow && !isShown) layer.addLayer(marker);
+            else if (!shouldShow && isShown) layer.removeLayer(marker);
         }
     }
 
-    highlight(name) {
+    highlight(name: string): void {
         this.#highlighted = name;
         this.#markers.get(name)?.setStyle({ fillColor: COLOR_HIGHLIGHT });
     }
 
-    unhighlight(name) {
+    unhighlight(name: string): void {
         if (this.#highlighted === name) this.#highlighted = null;
         this.#markers.get(name)?.setStyle({ fillColor: this.#colorFor(name) });
     }
 
-    focusSite(site) {
+    focusSite(site: Site): void {
         const marker = this.#markers.get(site.name);
         if (!marker) return;
         const popup = marker.getPopup();
@@ -201,14 +205,14 @@ export class MapView extends HTMLElement {
 
     // Largest popup height that still fits the map, leaving room for the marker
     // offset and autoPan padding.
-    #popupMaxHeight() {
+    #popupMaxHeight(): number {
         const mapHeight = this.#map?.getSize().y ?? 0;
         return Math.max(160, mapHeight - 80);
     }
 
     // Keep every popup's height cap in sync with the current map size so it is
     // correct whichever way a popup is opened (marker click or focusSite).
-    #updatePopupHeights() {
+    #updatePopupHeights(): void {
         const maxHeight = this.#popupMaxHeight();
         for (const marker of this.#markers.values()) {
             const popup = marker.getPopup();
@@ -218,7 +222,7 @@ export class MapView extends HTMLElement {
 
     // Briefly grow and shrink a marker twice — the vector-marker replacement for
     // the old Google Maps marker bounce.
-    #pulse(marker) {
+    #pulse(marker: L.CircleMarker): void {
         const base = MARKER_BASE.radius;
         let radius = base;
         let growing = true;
@@ -239,7 +243,7 @@ export class MapView extends HTMLElement {
         }, 60);
     }
 
-    #buildPopup(site) {
+    #buildPopup(site: Site): HTMLDivElement {
         const container = document.createElement('div');
         container.className = 'popup';
 
@@ -274,18 +278,18 @@ export class MapView extends HTMLElement {
 
     /* Query the MediaWiki API for images on the page, filter junk, then resolve
        each surviving image to a validated HTTPS Wikimedia URL and append it. */
-    async #pullImages(wikipediaID, imagesContainer) {
+    async #pullImages(wikipediaID: number, imagesContainer: HTMLElement): Promise<void> {
         const timeout = !this.#warnedWikipedia
             ? setTimeout(() => {
                   this.#warnedWikipedia = true;
                   this.#emit('wikipedia-error');
               }, 3000)
-            : null;
+            : undefined;
 
         try {
             const params = new URLSearchParams({
                 action: 'query',
-                pageids: wikipediaID,
+                pageids: String(wikipediaID),
                 prop: 'images',
                 format: 'json',
                 origin: '*',
@@ -304,7 +308,7 @@ export class MapView extends HTMLElement {
         }
     }
 
-    async #resolveImageURL(imageName, imagesContainer) {
+    async #resolveImageURL(imageName: string, imagesContainer: HTMLElement): Promise<void> {
         try {
             const params = new URLSearchParams({
                 action: 'query',
