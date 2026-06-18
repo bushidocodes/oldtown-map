@@ -47,11 +47,12 @@ Other scripts:
 * `npm run preview` — serve the contents of `dist/` locally to preview the build
 * `npm run typecheck` — run the TypeScript type-checker only
 * `npm run lint` — run ESLint over the source
+* `npm test` — run the Vitest unit suite (jsdom)
 
 ## Continuous integration
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) lints, type-checks, and
-builds the app on every pull request and on pushes to `master`, so regressions
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) lints, type-checks, tests,
+and builds the app on every pull request and on pushes to `master`, so regressions
 are caught before they ship. Deployment (below) is a separate workflow.
 
 ## Deployment

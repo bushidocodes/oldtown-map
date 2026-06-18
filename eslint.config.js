@@ -19,7 +19,7 @@ export default tseslint.config(
 
     // Tooling/config files run in Node.
     {
-        files: ['vite.config.ts', 'eslint.config.js'],
+        files: ['vite.config.ts', 'vitest.config.ts', 'eslint.config.js'],
         languageOptions: {
             globals: globals.node,
         },
