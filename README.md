@@ -46,12 +46,13 @@ Other scripts:
 * `npm run build` — type-check (`tsc`) and produce a bundled, minified build in `dist/`
 * `npm run preview` — serve the contents of `dist/` locally to preview the build
 * `npm run typecheck` — run the TypeScript type-checker only
+* `npm run lint` — run ESLint over the source
 
 ## Continuous integration
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) type-checks and builds the
-app on every pull request and on pushes to `master`, so regressions are caught
-before they ship. Deployment (below) is a separate workflow.
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) lints, type-checks, and
+builds the app on every pull request and on pushes to `master`, so regressions
+are caught before they ship. Deployment (below) is a separate workflow.
 
 ## Deployment
 
