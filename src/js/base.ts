@@ -2,6 +2,8 @@ import { render, type TemplateResult } from 'lit-html';
 import type { EmitArgs, OldtownEventMap } from './events.js';
 
 /** Generic constructor type, used by the {@link reactiveProps} mixin. */
+// TypeScript requires `any[]` rest args for a class to be usable as a mixin base.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Constructor<T = object> = new (...args: any[]) => T;
 
 /**
@@ -73,6 +75,7 @@ export function reactiveProps<TBase extends Constructor<Component>, P extends Re
     const store = new WeakMap<Component, Record<string, unknown>>();
 
     class WithReactiveProps extends Base {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         constructor(...args: any[]) {
             super(...args);
             store.set(this, { ...defaults });
