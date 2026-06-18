@@ -16,6 +16,7 @@
     "url": "git+https://github.com/bushidocodes/oldtown-map.git"
   },
   "author": "",
+  "packageManager": "pnpm@11.5.0",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/bushidocodes/oldtown-map/issues"
