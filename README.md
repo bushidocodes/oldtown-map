@@ -1,5 +1,7 @@
 # oldtown-map
 
+[![CI](https://github.com/bushidocodes/oldtown-map/actions/workflows/ci.yml/badge.svg)](https://github.com/bushidocodes/oldtown-map/actions/workflows/ci.yml)
+
 oldtown-map renders historic locations in Old Town Alexandria, Virginia on an
 interactive map as markers. It provides a sidebar with a searchable, filterable
 list of these locations. Selecting a marker or a list entry opens a popup with
@@ -44,6 +46,12 @@ Other scripts:
 * `npm run build` — type-check (`tsc`) and produce a bundled, minified build in `dist/`
 * `npm run preview` — serve the contents of `dist/` locally to preview the build
 * `npm run typecheck` — run the TypeScript type-checker only
+
+## Continuous integration
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) type-checks and builds the
+app on every pull request and on pushes to `master`, so regressions are caught
+before they ship. Deployment (below) is a separate workflow.
 
 ## Deployment
 
