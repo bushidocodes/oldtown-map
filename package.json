@@ -1,40 +1,36 @@
 {
   "name": "oldtown-map",
-  "version": "2.0.0",
-  "description": "oldtown-map renders historic locations in Old Town Alexandria, Virginia on a Leaflet/OpenStreetMap map as markers. A searchable sidebar filters both the list and the markers, sites can be favorited (persisted in localStorage), and selecting a site opens a popup with static information plus thumbnail images pulled from the location's Wikipedia page. Built with TypeScript web components and lit-html, bundled with Vite — no API keys.",
+  "version": "1.0.0",
+  "description": "oldtown-map is a JavaScript application that renders historic locations in Old Town Alexandria Virginia on a Google Map as markers. It provides a sidebar with a list of these locations and a searchable filter list that filters both the list and the markers on the map. Selecting a marker or a location on the list opens an InfoView with static information about the location. If an item has a Wikipedia ID, then the application displays a link to the Wikipedia page for the location and the infoView loads and scales thumbnail versions of the images on the locaiton's wikipedia page.",
+  "main": "index.js",
   "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "dotenv": "^17.4.2",
+    "gulp": "^5.0.0",
+    "gulp-babel": "^8.0.0",
+"gulp-clean-css": "^4.3.0",
+    "gulp-cli": "^3.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-html-minifier-terser": "^8.0.0",
+    "gulp-replace": "^1.1.4"
+  },
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "typecheck": "tsc",
-    "lint": "eslint .",
-    "test": "vitest run"
+    "build": "gulp",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bushidocodes/oldtown-map.git"
   },
   "author": "",
-  "packageManager": "pnpm@11.5.0",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/bushidocodes/oldtown-map/issues"
   },
-  "homepage": "https://github.com/bushidocodes/oldtown-map#readme",
-  "dependencies": {
-    "leaflet": "^1.9.4",
-    "lit-html": "^3.3.3"
-  },
-  "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@types/leaflet": "^1.9.21",
-    "eslint": "^10.5.0",
-    "globals": "^17.6.0",
-    "jsdom": "^29.1.1",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.61.1",
-    "vite": "^8.0.16",
-    "vitest": "^4.1.9"
-  }
+  "homepage": "https://github.com/bushidocodes/oldtown-map#readme"
 }
